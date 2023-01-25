@@ -1,0 +1,41 @@
+m
+i thiago 1
+i maria 2
+i jose 3
+i carlos 4
+v inexistente
+r inexistente
+a inexistente valor
+i repetida valor
+i repetida valor
+r repetida
+r repetida
+t
+p thiago
+p Thiago
+p Maria
+p maria
+r thiago
+r carlos
+t
+v maria
+v jose
+a maria 5
+a jose 6
+v maria
+v jose
+m
+r maria
+t
+m
+r jose
+t
+m
+v inexistente
+r inexistente
+a inexistente valor
+i repetida valor
+i repetida valor
+r repetida
+r repetida
+f
