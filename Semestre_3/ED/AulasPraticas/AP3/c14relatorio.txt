@@ -1,0 +1,158 @@
+Parte 1) variavel fact nao incializada.
+
+Script started on 2023-04-04 18:38:48-03:00 [TERM="xterm-256color" TTY="/dev/pts/4" COLUMNS="237" LINES="14"]
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ exitvalgrind --leak-check=full ./a.out [14Pgcc -g c13corrigido.cvalgrind --leak-check=full ./a.out [23Pgdb[C[C[C[C[C[C[C[C[C[23@valgrind --leak-check=full[C[C[C[C[C[C[C[C[C[14Pgcc -g c13corrigido.c[1Pcorrigido.c4corrigido.c
+[01m[Kgcc:[m[K [01;31m[Kerror: [m[Kc14corrigido.c: No such file or directory
+[01m[Kgcc:[m[K [01;31m[Kfatal error: [m[Kno input files
+compilation terminated.
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ 
+[K]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ 
+[K]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ gcc -g c14corrigido.cexit[Kvalgrind --leak-check=full ./a.out [14Pgcc -g c13corrigido.cvalgrind --leak-check=full ./a.out exit[Kgcc -g c14corrigido.c
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ gcc -g c14corrigido.cexit[Kvalgrind --leak-check=full ./a.out [14Pgcc -g c13corrigido.cvalgrind --leak-check=full ./a.out [23Pgdb[C[C[C[C[C[C[C[C[C
+[35;1m[35;1mGNU gdb [m[35;1m(Ubuntu 9.2-0ubuntu1~20.04.1) [m[35;1m9.2[m[35;1m
+[m[mCopyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+[m--Type <RET> for more, q to quit, c to continue without paging--
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from [32m./a.out[m...
+(gdb) run
+Starting program: /home/bdlemos_/Prog/Facul/Semestre_3/ED/AP3/a.out 
+Positive integer:-1
+Factorial -1 = 32767
+[Inferior 1 (process 5618) exited normally]
+(gdb) run
+Starting program: /home/bdlemos_/Prog/Facul/Semestre_3/ED/AP3/a.out 
+Positive integer:2 5
+Factorial 5 = 3932040
+[Inferior 1 (process 5688) exited normally]
+(gdb) q
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ gdb ./a.out cc -g c14corrigido.cexit[Kvalgrind --leak-check=full ./a.out [14Pgcc -g c13corrigido.cvalgrind --leak-check=full ./a.out 
+==5765== Memcheck, a memory error detector
+==5765== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==5765== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==5765== Command: ./a.out
+==5765== 
+Positive integer:1 5
+==5765== Conditional jump or move depends on uninitialised value(s)
+==5765==    at 0x48CA958: __vfprintf_internal (vfprintf-internal.c:1687)
+==5765==    by 0x48B4D3E: printf (printf.c:33)
+==5765==    by 0x109204: main (c14corrigido.c:12)
+==5765== 
+==5765== Use of uninitialised value of size 8
+==5765==    at 0x48AE69B: _itoa_word (_itoa.c:179)
+==5765==    by 0x48CA574: __vfprintf_internal (vfprintf-internal.c:1687)
+==5765==    by 0x48B4D3E: printf (printf.c:33)
+==5765==    by 0x109204: main (c14corrigido.c:12)
+==5765== 
+==5765== Conditional jump or move depends on uninitialised value(s)
+==5765==    at 0x48AE6AD: _itoa_word (_itoa.c:179)
+==5765==    by 0x48CA574: __vfprintf_internal (vfprintf-internal.c:1687)
+==5765==    by 0x48B4D3E: printf (printf.c:33)
+==5765==    by 0x109204: main (c14corrigido.c:12)
+==5765== 
+==5765== Conditional jump or move depends on uninitialised value(s)
+==5765==    at 0x48CB228: __vfprintf_internal (vfprintf-internal.c:1687)
+==5765==    by 0x48B4D3E: printf (printf.c:33)
+==5765==    by 0x109204: main (c14corrigido.c:12)
+==5765== 
+==5765== Conditional jump or move depends on uninitialised value(s)
+==5765==    at 0x48CA6EE: __vfprintf_internal (vfprintf-internal.c:1687)
+==5765==    by 0x48B4D3E: printf (printf.c:33)
+==5765==    by 0x109204: main (c14corrigido.c:12)
+==5765== 
+Factorial 5 = 3720
+==5765== 
+==5765== HEAP SUMMARY:
+==5765==     in use at exit: 0 bytes in 0 blocks
+==5765==   total heap usage: 2 allocs, 2 frees, 2,048 bytes allocated
+==5765== 
+==5765== All heap blocks were freed -- no leaks are possible
+==5765== 
+==5765== Use --track-origins=yes to see where uninitialised values come from
+==5765== For lists of detected and suppressed errors, rerun with: -s
+==5765== ERROR SUMMARY: 11 errors from 5 contexts (suppressed: 0 from 0)
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ valgrind --leak-check=full ./a.out [23Pgdb[C[C[C[C[C[C[C[C[Ccc -g c14corrigido.c
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ gcc -g c14corrigido.cvalgrind --leak-check=full ./a.out 
+==5871== Memcheck, a memory error detector
+==5871== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==5871== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==5871== Command: ./a.out
+==5871== 
+Positive integer:1 10  5
+Factorial 5 = 120
+==5871== 
+==5871== HEAP SUMMARY:
+==5871==     in use at exit: 0 bytes in 0 blocks
+==5871==   total heap usage: 2 allocs, 2 frees, 2,048 bytes allocated
+==5871== 
+==5871== All heap blocks were freed -- no leaks are possible
+==5871== 
+==5871== For lists of detected and suppressed errors, rerun with: -s
+==5871== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ valgrind --leak-check=full ./a.out 
+==5953== Memcheck, a memory error detector
+==5953== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==5953== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==5953== Command: ./a.out
+==5953== 
+Positive integer:-1
+Factorial -1 = 1
+==5953== 
+==5953== HEAP SUMMARY:
+==5953==     in use at exit: 0 bytes in 0 blocks
+==5953==   total heap usage: 2 allocs, 2 frees, 2,048 bytes allocated
+==5953== 
+==5953== All heap blocks were freed -- no leaks are possible
+==5953== 
+==5953== For lists of detected and suppressed errors, rerun with: -s
+==5953== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ valgrind --leak-check=full ./a.out [14Pgcc -g c14corrigido.c
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ gcc -g c14corrigido.cvalgrind --leak-check=full ./a.out [14Pgcc -g c14corrigido.cvalgrind --leak-check=full ./a.out [14Pgcc -g c14corrigido.cvalgrind --leak-check=full ./a.out [23Pgdb[C[C[C[C[C[C[C[C[C
+[35;1m[35;1mGNU gdb [m[35;1m(Ubuntu 9.2-0ubuntu1~20.04.1) [m[35;1m9.2[m[35;1m
+[m[mCopyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+[m--Type <RET> for more, q to quit, c to continue without paging--
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from [32m./a.out[m...
+(gdb) run
+Starting program: /home/bdlemos_/Prog/Facul/Semestre_3/ED/AP3/a.out 
+Positive integer:0
+Factorial 0 = 1
+[Inferior 1 (process 6068) exited normally]
+(gdb) q[Krun
+Starting program: /home/bdlemos_/Prog/Facul/Semestre_3/ED/AP3/a.out 
+Positive integer:1
+Factorial 1 = 1
+[Inferior 1 (process 6123) exited normally]
+(gdb) run
+Starting program: /home/bdlemos_/Prog/Facul/Semestre_3/ED/AP3/a.out 
+Positive integer:-1
+Factorial -1 = 1
+[Inferior 1 (process 6159) exited normally]
+(gdb) clea[K[K[K[Kq
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ w[Kexit
+exit
+
+Script done on 2023-04-04 18:42:27-03:00 [COMMAND_EXIT_CODE="0"]

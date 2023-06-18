@@ -3,7 +3,7 @@
 #include <cmath>
 #include <iostream>
 
-void Racional::Normalizar() {
+void Racional::Simplificar() {
   if(denominador_ < 0){
       denominador_ *= -1;
       numerador_ *= -1;
@@ -45,7 +45,7 @@ int Racional::denominador() const {
 
 Racional Racional::simetrico() const {
   Racional ans(-numerador_, denominador_);
-  ans.Normalizar();
+  ans.Simplificar();
   return ans;
 }
 
@@ -53,7 +53,7 @@ Racional Racional::somar(Racional k) const {
   int num = (k.numerador() * denominador_) + (numerador_ * k.denominador());
   int den = k.denominador() * denominador_; 
   Racional ans(num, den);
-  ans.Normalizar();
+  ans.Simplificar();
   return ans;
 }
 
@@ -61,7 +61,7 @@ Racional Racional::subtrair(Racional k) const {
   int num = - (k.numerador() * denominador_) + (numerador_ * k.denominador());
   int den = k.denominador() * denominador_;
   Racional ans(num, den);
-  ans.Normalizar();
+  ans.Simplificar();
   return ans;
 }
 
@@ -69,14 +69,14 @@ Racional Racional::multiplicar(Racional k) const {
   int num = (k.numerador()* numerador_);
   int den = k.denominador() * denominador_; 
   Racional ans (num, den);
-  ans.Normalizar();
+  ans.Simplificar();
   return ans;
 }
 
 Racional Racional::dividir(Racional k) const {
   Racional inverse(k.denominador(), k.numerador());
   Racional ans = multiplicar(inverse);
-  ans.Normalizar();
+  ans.Simplificar();
   return ans;
 }
 

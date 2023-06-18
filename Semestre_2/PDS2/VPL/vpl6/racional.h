@@ -43,7 +43,7 @@ class Racional {
 
   // Divide o numerador e denominador pelo MDC, e
   // garante que o denominador é sempre positivo.
-  void Normalizar();
+  void Simplificar();
 };
 
 #endif

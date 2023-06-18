@@ -1,0 +1,104 @@
+Parte 1) O ponteiro text nao é allocado mas é desalocado e o alocaçao da variavel "rotation3D" esta comentada.
+
+Parte 2)
+Script started on 2023-04-04 16:17:41-03:00 [TERM="xterm-256color" TTY="/dev/pts/6" COLUMNS="165" LINES="15"]
+
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+[m--Type <RET> for more, q to quit, c to continue without paging--
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from [32m./a.out[m...
+(gdb) run
+Starting program: /home/bdlemos_/Prog/Facul/Semestre_3/ED/AP3/a.out 
+
+Program received signal SIGSEGV, Segmentation fault.
+[34m0x000055555555517a[m in [33mmain[m () at [32mc4.c[m:13
+13	rotation3D->rows=4;
+(gdb) q
+A debugging session is active.
+
+	Inferior 1 [process 12117] will be killed.
+
+Quit anyway? (y or n) y
+==12251== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==12251== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==12251== Command: ./a.out
+==12251== 
+==12251== Use of uninitialised value of size 8
+==12251==    at 0x10917A: main (c4.c:13)
+==12251== 
+==12251== Invalid write of size 4
+==12251==    at 0x10917A: main (c4.c:13)
+==12251==  Address 0x0 is not stack'd, malloc'd or (recently) free'd
+==12251== 
+==12251== 
+==12251== Process terminating with default action of signal 11 (SIGSEGV)
+==12251==  Access not within mapped region at address 0x0
+==12251==    at 0x10917A: main (c4.c:13)
+==12251==  If you believe this happened as a result of a stack
+==12251==  overflow in your program's main thread (unlikely but
+==12251==  possible), you can try to increase the size of the
+==12251==  main thread stack using the --main-stacksize= flag.
+==12251==  The main thread stack size used in this run was 8388608.
+==12251== 
+==12251== HEAP SUMMARY:
+==12251==     in use at exit: 0 bytes in 0 blocks
+==12251==   total heap usage: 0 allocs, 0 frees, 0 bytes allocated
+==12251== 
+==12251== All heap blocks were freed -- no leaks are possible
+==12251== 
+==12251== Use --track-origins=yes to see where uninitialised values come from
+==12251== For lists of detected and suppressed errors, rerun with: -s
+==12251== ERROR SUMMARY: 2 errors from 2 contexts (suppressed: 0 from 0)
+Segmentation fault
+
+Parte 3) Retirei a variavel "text" pois não é usada e descomentei o que estava comentado.
+
+Parte 4)
+==12379== Memcheck, a memory error detector
+==12379== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==12379== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==12379== Command: ./a.out
+==12379== 
+==12379== 
+==12379== HEAP SUMMARY:
+==12379==     in use at exit: 0 bytes in 0 blocks
+==12379==   total heap usage: 6 allocs, 6 frees, 112 bytes allocated
+==12379== 
+==12379== All heap blocks were freed -- no leaks are possible
+==12379== 
+==12379== For lists of detected and suppressed errors, rerun with: -s
+==12379== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+[m--Type <RET> for more, q to quit, c to continue without paging--
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from [32m./a.out[m...
+(gdb) run
+Starting program: /home/bdlemos_/Prog/Facul/Semestre_3/ED/AP3/a.out 
+[Inferior 1 (process 12441) exited normally]
+(gdb) q
+exit
+
+Script done on 2023-04-04 16:18:51-03:00 [COMMAND_EXIT_CODE="0"]

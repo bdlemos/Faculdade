@@ -1,0 +1,232 @@
+Parte 1) A variavel Buf não é alocada, ai da falha de segmentação.
+
+Script started on 2023-04-04 18:50:52-03:00 [TERM="xterm-256color" TTY="/dev/pts/4" COLUMNS="237" LINES="14"]
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ exitgdb ./a.out [23@valgrind --leak-check=full[C[C[C[C[C[C[C[C[C[23Pgdb[C[C[C[C[C[C[C[C[C[8Pexit[Kexitgdb ./a.out [23@valgrind --leak-check=full[C[C[C[C[C[C[C[C[C[14Pgcc -g c16corrigido.cvalgrind --leak-check=full ./a.out [14Pgcc -g c16corrigido.c[1Pcorrigido.c9corrigido.c
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ gcc -g c19corrigido.cexit[Kgdb ./a.out [23@valgrind --leak-check=full[C[C[C[C[C[C[C[C[C[14Pgcc -g c16corrigido.cvalgrind --leak-check=full ./a.out [23Pgdb[C[C[C[C[C[C[C[C[C
+[35;1m[35;1mGNU gdb [m[35;1m(Ubuntu 9.2-0ubuntu1~20.04.1) [m[35;1m9.2[m[35;1m
+[m[mCopyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+[m--Type <RET> for more, q to quit, c to continue without paging--
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from [32m./a.out[m...
+(gdb) run
+Starting program: /home/bdlemos_/Prog/Facul/Semestre_3/ED/AP3/a.out 
+enter a number:
+'0  '9  10
+
+Program received signal SIGSEGV, Segmentation fault.
+[34m0x00007ffff7e60ae7[m in [33m__GI__IO_str_overflow[m ([36mfp[m=0x7fffffffdc50, [36mc[m=115) at [32mstrops.c[m:133
+133	strops.c: No such file or directory.
+(gdb) rub[Kb[Kn
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/bdlemos_/Prog/Facul/Semestre_3/ED/AP3/a.out 
+enter a number:
+10 1 20 40
+
+Program received signal SIGSEGV, Segmentation fault.
+[34m0x00007ffff7e60ae7[m in [33m__GI__IO_str_overflow[m ([36mfp[m=0x7fffffffdc50, [36mc[m=115) at [32mstrops.c[m:133
+133	strops.c: No such file or directory.
+(gdb) q
+A debugging session is active.
+
+	Inferior 1 [process 7895] will be killed.
+
+Quit anyway? (y or n) y
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ gdb ./a.out cc -g c19corrigido.c[9Pdb ./a.out [Kgdb ./a.out cc -g c19corrigido.cexit[Kgdb ./a.out [23@valgrind --leak-check=full[C[C[C[C[C[C[C[C[C
+==8004== Memcheck, a memory error detector
+==8004== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==8004== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==8004== Command: ./a.out
+==8004== 
+enter a number:
+10
+==8004== Invalid write of size 1
+==8004==    at 0x48E6AE7: _IO_str_overflow (strops.c:133)
+==8004==    by 0x48E5023: _IO_default_xsputn (genops.c:399)
+==8004==    by 0x48E5023: _IO_default_xsputn (genops.c:370)
+==8004==    by 0x48C9971: __vfprintf_internal (vfprintf-internal.c:1373)
+==8004==    by 0x48D80F8: __vsprintf_internal (iovsprintf.c:95)
+==8004==    by 0x48B4EC7: sprintf (sprintf.c:30)
+==8004==    by 0x10929C: printSum (c19corrigido.c:22)
+==8004==    by 0x1092D4: main (c19corrigido.c:28)
+==8004==  Address 0x0 is not stack'd, malloc'd or (recently) free'd
+==8004== 
+==8004== 
+==8004== Process terminating with default action of signal 11 (SIGSEGV)
+==8004==  Access not within mapped region at address 0x0
+==8004==    at 0x48E6AE7: _IO_str_overflow (strops.c:133)
+==8004==    by 0x48E5023: _IO_default_xsputn (genops.c:399)
+==8004==    by 0x48E5023: _IO_default_xsputn (genops.c:370)
+==8004==    by 0x48C9971: __vfprintf_internal (vfprintf-internal.c:1373)
+==8004==    by 0x48D80F8: __vsprintf_internal (iovsprintf.c:95)
+==8004==    by 0x48B4EC7: sprintf (sprintf.c:30)
+==8004==    by 0x10929C: printSum (c19corrigido.c:22)
+==8004==    by 0x1092D4: main (c19corrigido.c:28)
+==8004==  If you believe this happened as a result of a stack
+==8004==  overflow in your program's main thread (unlikely but
+==8004==  possible), you can try to increase the size of the
+==8004==  main thread stack using the --main-stacksize= flag.
+==8004==  The main thread stack size used in this run was 8388608.
+==8004== 
+==8004== HEAP SUMMARY:
+==8004==     in use at exit: 0 bytes in 0 blocks
+==8004==   total heap usage: 2 allocs, 2 frees, 2,048 bytes allocated
+==8004== 
+==8004== All heap blocks were freed -- no leaks are possible
+==8004== 
+==8004== For lists of detected and suppressed errors, rerun with: -s
+==8004== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+Segmentation fault
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ valgrind --leak-check=full ./a.out [23Pgdb[C[C[C[C[C[C[C[C[Ccc -g c19corrigido.cexit[Kgdb ./a.out 
+[35;1m[35;1mGNU gdb [m[35;1m(Ubuntu 9.2-0ubuntu1~20.04.1) [m[35;1m9.2[m[35;1m
+[m[mCopyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+[m--Type <RET> for more, q to quit, c to continue without paging--
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from [32m./a.out[m...
+(gdb) run
+Starting program: /home/bdlemos_/Prog/Facul/Semestre_3/ED/AP3/a.out 
+enter a number:
+10
+
+Program received signal SIGSEGV, Segmentation fault.
+[34m0x00007ffff7e60ae7[m in [33m__GI__IO_str_overflow[m ([36mfp[m=0x7fffffffdc50, [36mc[m=115) at [32mstrops.c[m:133
+133	strops.c: No such file or directory.
+(gdb) next
+
+Program terminated with signal SIGSEGV, Segmentation fault.
+The program no longer exists.
+(gdb) run
+Starting program: /home/bdlemos_/Prog/Facul/Semestre_3/ED/AP3/a.out 
+enter a number:
+10
+
+Program received signal SIGSEGV, Segmentation fault.
+[34m0x00007ffff7e60ae7[m in [33m__GI__IO_str_overflow[m ([36mfp[m=0x7fffffffdc50, [36mc[m=115) at [32mstrops.c[m:133
+133	strops.c: No such file or directory.
+(gdb) next
+
+Program terminated with signal SIGSEGV, Segmentation fault.
+The program no longer exists.
+(gdb) next
+The program is not being run.
+(gdb) break main[K[K[K[KprintSum 
+Breakpoint 1 at [34m0x55555555521b[m: file [32mc19corrigido.c[m, line 16.
+(gdb) run
+Starting program: /home/bdlemos_/Prog/Facul/Semestre_3/ED/AP3/a.out 
+
+Breakpoint 1, [33mprintSum[m () at [32mc19corrigido.c[m:16
+16	{
+(gdb) s[Kcontiyu[K[Kue
+Undefined command: "contiue".  Try "help".
+(gdb) contiue[K[Kb[Knue 
+Continuing.
+enter a number:
+10
+
+Program received signal SIGSEGV, Segmentation fault.
+[34m0x00007ffff7e60ae7[m in [33m__GI__IO_str_overflow[m ([36mfp[m=0x7fffffffdc50, [36mc[m=115) at [32mstrops.c[m:133
+133	strops.c: No such file or directory.
+(gdb) continue 
+[C[C[C[C[C[C[Kq
+A debugging session is active.
+
+	Inferior 1 [process 8408] will be killed.
+
+Quit anyway? (y or n) y
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ gdb ./a.out [23@valgrind --leak-check=full[C[C[C[C[C[C[C[C[C[23Pgdb[C[C[C[C[C[C[C[C[Ccc -g c19corrigido.c
+[01m[Kc19corrigido.c:[m[K In function ‘[01m[KprintSum[m[K’:
+[01m[Kc19corrigido.c:22:13:[m[K [01;35m[Kwarning: [m[Kpassing argument 1 of ‘[01m[Ksprintf[m[K’ from incompatible pointer type [[01;35m[K-Wincompatible-pointer-types[m[K]
+   22 |     sprintf([01;35m[Kbuf[m[K,"sum=%d",sum_to_n(atoi(line)));
+      |             [01;35m[K^~~[m[K
+      |             [01;35m[K|[m[K
+      |             [01;35m[Kint *[m[K
+In file included from [01m[Kc19corrigido.c:1[m[K:
+[01m[K/usr/include/stdio.h:334:38:[m[K [01;36m[Knote: [m[Kexpected ‘[01m[Kchar * restrict[m[K’ but argument is of type ‘[01m[Kint *[m[K’
+  334 | extern int sprintf ([01;36m[Kchar *__restrict __s[m[K,
+      |                     [01;36m[K~~~~~~~~~~~~~~~~~^~~[m[K
+[01m[Kc19corrigido.c:23:14:[m[K [01;35m[Kwarning: [m[Kformat ‘[01m[K%s[m[K’ expects argument of type ‘[01m[Kchar *[m[K’, but argument 2 has type ‘[01m[Kint *[m[K’ [[01;35m[K-Wformat=[m[K]
+   23 |     printf("[01;35m[K%s[m[K\n",[32m[Kbuf[m[K);
+      |             [01;35m[K~^[m[K    [32m[K~~~[m[K
+      |              [01;35m[K|[m[K    [32m[K|[m[K
+      |              [01;35m[K|[m[K    [32m[Kint *[m[K
+      |              [01;35m[Kchar *[m[K
+      |             [32m[K%ls[m[K
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ gcc -g c19corrigido.c[9Pdb ./a.out cc -g c19corrigido.c
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ gcc -g c19corrigido.c[9Pdb ./a.out 
+[35;1m[35;1mGNU gdb [m[35;1m(Ubuntu 9.2-0ubuntu1~20.04.1) [m[35;1m9.2[m[35;1m
+[m[mCopyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+[m--Type <RET> for more, q to quit, c to continue without paging--
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from [32m./a.out[m...
+(gdb) run
+Starting program: /home/bdlemos_/Prog/Facul/Semestre_3/ED/AP3/a.out 
+enter a number:
+10
+sum=55
+[Inferior 1 (process 8623) exited normally]
+(gdb) q
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ gdb ./a.out cc -g c19corrigido.c[9Pdb ./a.out [23@valgrind --leak-check=full[C[C[C[C[C[C[C[C[C
+==8689== Memcheck, a memory error detector
+==8689== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==8689== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==8689== Command: ./a.out
+==8689== 
+enter a number:
+5
+sum=15
+==8689== 
+==8689== HEAP SUMMARY:
+==8689==     in use at exit: 10 bytes in 1 blocks
+==8689==   total heap usage: 3 allocs, 2 frees, 2,058 bytes allocated
+==8689== 
+==8689== LEAK SUMMARY:
+==8689==    definitely lost: 0 bytes in 0 blocks
+==8689==    indirectly lost: 0 bytes in 0 blocks
+==8689==      possibly lost: 0 bytes in 0 blocks
+==8689==    still reachable: 10 bytes in 1 blocks
+==8689==         suppressed: 0 bytes in 0 blocks
+==8689== Reachable blocks (those to which a pointer was found) are not shown.
+==8689== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==8689== 
+==8689== For lists of detected and suppressed errors, rerun with: -s
+==8689== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ exit
+exit
+
+Script done on 2023-04-04 19:01:36-03:00 [COMMAND_EXIT_CODE="0"]

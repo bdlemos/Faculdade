@@ -1,0 +1,98 @@
+Parte 1) Divisao por zero.
+
+Script started on 2023-04-04 18:45:20-03:00 [TERM="xterm-256color" TTY="/dev/pts/4" COLUMNS="237" LINES="14"]
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ exitgdb ./a.out cc -g c15corrigido.cvalgrind --leak-check=full ./a.out [14Pgcc -g c15corrigido.c[1Pcorrigido.c6corrigido.c
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ gcc -g c16corrigido.cexit[Kgdb ./a.out 
+[35;1m[35;1mGNU gdb [m[35;1m(Ubuntu 9.2-0ubuntu1~20.04.1) [m[35;1m9.2[m[35;1m
+[m[mCopyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+[m--Type <RET> for more, q to quit, c to continue without paging--
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from [32m./a.out[m...
+(gdb) run
+Starting program: /home/bdlemos_/Prog/Facul/Semestre_3/ED/AP3/a.out 
+
+Program received signal SIGFPE, Arithmetic exception.
+[34m0x000055555555513b[m in [33mactual_calc[m ([36ma[m=13, [36mb[m=0) at [32mc16corrigido.c[m:6
+6	  c=a/b;
+(gdb) q
+A debugging session is active.
+
+	Inferior 1 [process 7104] will be killed.
+
+Quit anyway? (y or n) y
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ gdb ./a.out cc -g c16corrigido.cexit[Kgdb ./a.out cc -g c15corrigido.cvalgrind --leak-check=full ./a.out 
+==7191== Memcheck, a memory error detector
+==7191== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==7191== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==7191== Command: ./a.out
+==7191== 
+==7191== 
+==7191== Process terminating with default action of signal 8 (SIGFPE)
+==7191==  Integer divide by zero at address 0x1002D47EFF
+==7191==    at 0x10913B: actual_calc (c16corrigido.c:6)
+==7191==    by 0x109170: calc (c16corrigido.c:15)
+==7191==    by 0x109189: main (c16corrigido.c:20)
+==7191== 
+==7191== HEAP SUMMARY:
+==7191==     in use at exit: 0 bytes in 0 blocks
+==7191==   total heap usage: 0 allocs, 0 frees, 0 bytes allocated
+==7191== 
+==7191== All heap blocks were freed -- no leaks are possible
+==7191== 
+==7191== For lists of detected and suppressed errors, rerun with: -s
+==7191== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+Floating point exception
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ valgrind --leak-check=full ./a.out [23Pgdb[C[C[C[C[C[C[C[C[Ccc -g c16corrigido.c
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ gcc -g c16corrigido.cvalgrind --leak-check=full ./a.out 
+==7251== Memcheck, a memory error detector
+==7251== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==7251== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==7251== Command: ./a.out
+==7251== 
+==7251== 
+==7251== HEAP SUMMARY:
+==7251==     in use at exit: 0 bytes in 0 blocks
+==7251==   total heap usage: 0 allocs, 0 frees, 0 bytes allocated
+==7251== 
+==7251== All heap blocks were freed -- no leaks are possible
+==7251== 
+==7251== For lists of detected and suppressed errors, rerun with: -s
+==7251== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ valgrind --leak-check=full ./a.out [14Pgcc -g c16corrigido.cvalgrind --leak-check=full ./a.out [23Pgdb[C[C[C[C[C[C[C[C[C
+[35;1m[35;1mGNU gdb [m[35;1m(Ubuntu 9.2-0ubuntu1~20.04.1) [m[35;1m9.2[m[35;1m
+[m[mCopyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+[m--Type <RET> for more, q to quit, c to continue without paging--
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from [32m./a.out[m...
+(gdb) run
+Starting program: /home/bdlemos_/Prog/Facul/Semestre_3/ED/AP3/a.out 
+[Inferior 1 (process 7297) exited normally]
+(gdb) q[Kq
+]0;bdlemos_@Bdlemos321: ~/Prog/Facul/Semestre_3/ED/AP3[01;32mbdlemos_@Bdlemos321[00m:[01;34m~/Prog/Facul/Semestre_3/ED/AP3[00m$ gdb ./a.out [23@valgrind --leak-check=full[C[C[C[C[C[C[C[C[C[14Pgcc -g c16corrigido.cvalgrind --leak-check=full ./a.out [23Pgdb[C[C[C[C[C[C[C[C[Ccc -g c16corrigido.cexit[Kgdb ./a.out [8Pexit
+exit
+
+Script done on 2023-04-04 18:47:41-03:00 [COMMAND_EXIT_CODE="0"]
