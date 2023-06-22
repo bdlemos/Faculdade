@@ -1,3 +1,6 @@
+#ifndef NODE_HPP
+#define NODE_HPP
+
 class Node {
     private:
         Node* left;
@@ -17,6 +20,7 @@ class Node {
         void setRight(Node* right){this->right = right;}
         string getLetra(){return letra;}
         int getFreq(){return freq;}
+        void setFreq(int freq){this->freq = freq;}
         bool operator>(Node& other){
             return freq > other.freq;
         }
@@ -31,3 +35,5 @@ class Node {
             return os;
         }
 };
+
+#endif

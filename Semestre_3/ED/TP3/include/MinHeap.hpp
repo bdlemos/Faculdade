@@ -1,3 +1,6 @@
+#ifndef MINHEAP_HPP
+#define MINHEAP_HPP
+
 #include <iostream>
 
 using namespace std;
@@ -81,3 +84,5 @@ class MinHeap {
         int getSize(){return size;}
         ~MinHeap(){delete[] v;}
 };
+
+#endif

@@ -1,101 +1,118 @@
 #include <iostream>
+#include <cmath>
+#include <fstream>
 #include <MinHeap.hpp>
+#include <Huffman.hpp>
 #include <Node.hpp>
 
 using namespace std;
 
-void delete_tree(Node* node){
-    if(node != nullptr){
-        delete_tree(node->getLeft());
-        delete_tree(node->getRight());
-        delete node;
+char opt;
+string Fin;
+string Fout;
+int current_bit = 0;
+unsigned char bit_buffer;
+
+void parse(int argc, char *argv[]){
+    for(int i = 0; i < argc; i++){
+        if(string(argv[i]) == "-c") {
+            opt = 'c';
+            Fin = string(argv[i+1]);
+            Fout = string(argv[i+2]);
+            return;
+        }
+        else if(string(argv[i]) == "-d") {
+            opt = 'd';
+            Fin = string(argv[i+1]);
+            Fout = string(argv[i+2]);
+            return;
+        }
+    }
+    throw "Invalid arguments";
+}
+
+void write_bits(string bits, ofstream& out){
+    int i = 0;
+    int size = bits.size();
+    while(i < size){
+        char c = 0;
+        for(int j = 0; j < 8; j++){
+            if(i+j < size){
+                c = c << 1;
+                if(bits[i+j] == '1') c = c | 1;
+            }else break;
+        }
+        out << c;
+        i += 8;
     }
 }
 
-void print_codes(Node* node, string code){
-    if(node != nullptr){
-        if(node->getLetra() != "#"){
-            cout << node->getLetra() << " " << code << endl;
-        }
-        print_codes(node->getLeft(), code+"0");
-        print_codes(node->getRight(), code+"1");
-    }
-}
+string read_bits(ifstream& in, int size){
+    int extra_bits = 8 - size % 8;
+    if (extra_bits == 8) extra_bits = 0;
 
-string get_code(Node* node, string letra, string code){
-    if(node != nullptr){
-        if(node->getLetra() == letra){
-            return code;
-        }
-        string aux = get_code(node->getLeft(), letra, code+"0");
-        if(aux != ""){
-            return aux;
-        }
-        aux = get_code(node->getRight(), letra, code+"1");
-        if(aux != ""){
-            return aux;
-        }
-    }
-    return "";
-}
-
-string code(Node* node, string letra){
-    string code = "";
-    for(auto i : letra){
-        code += get_code(node, string(1,i), "");
-    }
-    return code;
-}
-
-string decode(Node* node, string code){
-    string word = "";
-    Node* aux = node;
-    for(auto i : code){
-        if(i == '0'){
-            aux = aux->getLeft();
+    string bits = "";
+    int count = 0;
+    char c;
+    int i;
+    
+    while(in.get(c)){
+        count++;
+        if (count != ceil(float(size)/8)){
+            for(i = 7; i >= 0; i--){
+                char bit = ((c >> i) & 1) ? '1' : '0';
+                bits += bit;
+            }
         }else{
-            aux = aux->getRight();
-        }
-        if(aux->getLetra() != "#"){
-            word += aux->getLetra();
-            aux = node;
+            for(i =  7 - extra_bits; i >= 0; i--){
+                char bit = ((c >> i) & 1) ? '1' : '0';
+                bits += bit;
+            }
+            break;
         }
     }
-    return word;
+    return bits;
 }
 
-Node* Huffman(MinHeap<Node>& heap){
-    while(heap.getSize() > 1){
-        Node aux = heap.ExtractMin();
-        Node* left =  new Node(aux.getLetra(), aux.getFreq(), aux.getLeft(), aux.getRight());
-        
-        aux = heap.ExtractMin();
-        Node* right = new Node(aux.getLetra(), aux.getFreq(), aux.getLeft(), aux.getRight());
 
-        Node node = Node("#", left->getFreq() + right->getFreq());
-        node.setLeft(left);
-        node.setRight(right);
-        heap.Insert(node);
-    }
-    Node aux = heap.ExtractMin();
-    return new Node(aux.getLetra(), aux.getFreq(), aux.getLeft(), aux.getRight());
-}
-
-int main(){
+int main(int argc, char *argv[]){
     try{
-        Node v[6] = {Node("a", 45), Node("b", 13), Node("c", 12), Node("d", 16), Node("e", 9), Node("f", 5)};
-        MinHeap<Node> heap(v,6);
-        Node* root = Huffman(heap);
-        //print_codes(root, "");
-        string word = "bad";
+        //Node v[6] = {Node("a", 45), Node("b", 13), Node("c", 12), Node("d", 16), Node("e", 9), Node("f", 5)};
+        parse(argc, argv);
+        Node ascii[256];
+        for(int i = 0; i < 256; i++) ascii[i] = Node(string(1,i), 0);
         
-        string Code = code(root, word);
-        cout << Code << endl;
+        ifstream in(Fin);
+        if (!in.is_open()) throw "File not found";
         
-        cout << decode(root, Code);
+        char c;
+        string text = "";
+        while(in.get(c)){
+            ascii[int(c)].setFreq(ascii[int(c)].getFreq()+1);
+            text += c;
+        }
+        in.close();
+        
+        MinHeap<Node> heap(ascii,256);
+        Huffman code(heap);
+        string Code = code.code(text);
+        
+        //write the code in a binary file
+        ofstream out(Fout, ios::out | ios::binary);
+        write_bits(Code, out);
+        out.close();
+        
+        //Descompress test
+        ifstream in2(Fout, ios::in | ios::binary);
+        string s = read_bits(in2, Code.size());
+        in2.close();
+        string decoded = code.decode(s);
 
-        cout << endl;
-        delete_tree(root);
+        //Write descompressed in a file
+        ofstream decode("decoded.txt", ios::out);
+        decode << decoded;
+        decode.close();
+        cout << "Sucessfully compressed file\n";
     }catch(const char* e){
         cout << e << endl;
     }
