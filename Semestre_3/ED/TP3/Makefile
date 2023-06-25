@@ -15,12 +15,14 @@ OBJ = obj
 INC = include
 BIN = bin
 OBJS = $(OBJ)/main.o $(OBJ)/Huffman.o
-HDRS = $(INC)/Pilha.hpp $(INC)/MinHeap.hpp $(INC)/Huffman.hpp
-CFLAGS = -Wall -c -I$(INC)
+HDRS = $(INC)/MinHeap.hpp $(INC)/Huffman.hpp
+CFLAGS = -Wall -c -I $(INC)
 
 EXE = $(BIN)/main
 
 run:  $(EXE)
+	  $(EXE) -c text.txt code.bin
+	  $(EXE) -d code.bin decoded.txt  table.txt
 
 $(BIN)/main: $(OBJS)
 	$(CC) -o $(BIN)/main $(OBJS) $(LIBS)
@@ -32,4 +34,4 @@ $(OBJ)/Huffman.o: $(HDRS) $(SRC)/Huffman.cpp
 
 	
 clean:
-	rm -rf bin/* obj/*
+	rm -rf bin/* obj/* decoded.txt code.bin table.txt

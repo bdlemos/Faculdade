@@ -10,7 +10,7 @@ Huffman::Huffman(MinHeap<Node>& heap){
         aux = heap.ExtractMin();
         Node* right = new Node(aux.getLetra(), aux.getFreq(), aux.getLeft(), aux.getRight());
 
-        Node node = Node("#", left->getFreq() + right->getFreq());
+        Node node = Node("", left->getFreq() + right->getFreq());
         node.setLeft(left);
         node.setRight(right);
         heap.Insert(node);
@@ -33,7 +33,7 @@ void Huffman::delete_tree(Node* node){
 
 void Huffman::print_codes(Node* node, string code){
     if(node != nullptr){
-        if(node->getLetra() != "#"){
+        if(node->getLetra() != ""){
             cout << node->getLetra() << " " << code << endl;
         }
         print_codes(node->getLeft(), code+"0");
@@ -58,7 +58,7 @@ string Huffman::decode(string code){
         }else{
             aux = aux->getRight();
         }
-        if(aux->getLetra() != "#"){
+        if(aux->getLetra() != ""){
             word += aux->getLetra();
             aux = root;
         }
