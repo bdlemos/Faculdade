@@ -5,11 +5,11 @@ class Node {
     private:
         Node* left;
         Node* right;
-        string letra;
+        string Letter;
         int freq;
     public:
-        Node(string letra = "", int freq = 0, Node* left = nullptr, Node* right = nullptr){
-            this->letra = letra;
+        Node(string Letter = "", int freq = 0, Node* left = nullptr, Node* right = nullptr){
+            this->Letter = Letter;
             this->freq = freq;
             this->left = left;
             this->right = right;
@@ -18,7 +18,7 @@ class Node {
         Node* getRight(){return right;}
         void setLeft(Node* left){this->left = left;}
         void setRight(Node* right){this->right = right;}
-        string getLetra(){return letra;}
+        string getLetter(){return Letter;}
         int getFreq(){return freq;}
         void setFreq(int freq){this->freq = freq;}
         bool operator>(Node& other){
@@ -31,7 +31,7 @@ class Node {
             return freq == other.freq;
         }
         friend ostream& operator<<(ostream& os, Node& node){
-            os << node.letra << ": " << node.freq;
+            os << node.Letter << ": " << node.freq;
             return os;
         }
 };

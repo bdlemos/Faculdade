@@ -1,13 +1,3 @@
-#---------------------------------------------------------------------
-# Arquivo	: Makefile
-# Conteúdo	: compilar o programa vetop
-# Autor		: Wagner Meira Jr. (meira@dcc.ufmg.br)
-# Histórico	: 2022-04-02 - arquivo criado
-#---------------------------------------------------------------------
-# Opções	: make all - compila tudo
-#		: make clean - remove objetos e executável
-#---------------------------------------------------------------------
-
 CC = g++
 LIBS = -lm
 SRC = src
@@ -21,7 +11,7 @@ CFLAGS = -Wall -c -I $(INC)
 EXE = $(BIN)/main
 
 run:  $(EXE)
-	  $(EXE) -c world192.txt code.bin
+	  $(EXE) -c bible.txt code.bin
 	  $(EXE) -d code.bin decoded.txt  table.txt
 
 $(BIN)/main: $(OBJS)

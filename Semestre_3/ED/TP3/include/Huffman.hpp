@@ -9,15 +9,35 @@
 class Huffman {
     private:
         Node* root;
-        void delete_tree(Node* node);
-        std::string get_code(Node* node, std::string letra, std::string code);
+        //Delete tree
+        void Delete_tree(Node* node);
+        //Receive a char and return the code
+        std::string Get_code(Node* node, std::string character, std::string code);
+        //Receive a char and return the code
+        std::string Code(std::string character);
+        //Receive a code and return the string
+        std::string DecodedString(std::string code);
+        //Receive a strinf of bits and write bits in file
+        void Write_bits(std::string bits, std::ofstream& out);
+        //Receive a file and return a string of bits
+        std::string Read_bits(std::ifstream& in, int extra_bits);
+        //Build the tree of ocorrrences of chars
+        void Build_tree(MinHeap<Node>& heap);
+        //Write the table of ocorrrences in file
+        void Write_table(Node* ascii, std::ofstream& out);
+        //Read the table of ocorrrences in file
+        void Read_table(Node* ascii, std::ifstream& in);
     public:
-        Huffman(MinHeap<Node>& heap);
+        //Has 2 modes: compress and decompress, the default is compress
+        //Compress: Receive a file to compress and a file to write the compressed file
+        //Decompress:  Receive a compressed file, a file to write the decompressed file, a table of ocorrrences and the option 'd'
+        Huffman(std::string Fin, std::string Fout, std::string Table = "", char opt = 'c');
         ~Huffman();
-        void print_codes(Node* node, string code);
-        std::string code(std::string letra);
-        std::string decode(std::string code);
-        void write_bits(std::string bits, std::ofstream& out);
-        std::string read_bits(std::ifstream& in, int extra_bits);
+        //Compress a file
+        //Receive a file to compress and a file to write the compressed file
+        void Encode(std::string Fin, std::string Fout);
+        //Decompress a file
+        //Receive a compressed file, a file to write the decompressed file and a table of ocorrrences
+        void Decode(std::string Fin, std::string Fout ,std::string Table);
 };
 #endif
