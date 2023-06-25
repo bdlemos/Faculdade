@@ -21,7 +21,7 @@ CFLAGS = -Wall -c -I $(INC)
 EXE = $(BIN)/main
 
 run:  $(EXE)
-	  $(EXE) -c text.txt code.bin
+	  $(EXE) -c world192.txt code.bin
 	  $(EXE) -d code.bin decoded.txt  table.txt
 
 $(BIN)/main: $(OBJS)

@@ -82,3 +82,41 @@ string Huffman::get_code(Node* node, string letra, string code){
     }
     return "";
 }
+
+void Huffman::write_bits(string bits, ofstream& out){
+    int i = 0;
+    int size = bits.size();
+    while(i < size){
+        char c = 0;
+        for(int j = 0; j < 8; j++){
+            if(i+j < size){
+                c = c << 1;
+                if(bits[i+j] == '1') c = c | 1;
+            }else break;
+        }
+        out << c;
+        i += 8;
+    }
+}
+
+string Huffman::read_bits(ifstream& in, int extra_bits){
+    if (extra_bits == 8) extra_bits = 0;
+
+    string bits = "";
+    char c;
+    int i;
+    
+    while(in.get(c)){
+        for(i = 7; i >= 0; i--){
+            char bit = ((c >> i) & 1) ? '1' : '0';
+            bits += bit;
+        }
+    }
+    
+    //Remove extra bits
+    int size = bits.size();
+    if (extra_bits != 0)
+        for (int i = size - 9 + extra_bits; i < size - extra_bits; i++) bits[i] = bits[i+1];
+
+    return bits.substr(0, size - extra_bits);
+}

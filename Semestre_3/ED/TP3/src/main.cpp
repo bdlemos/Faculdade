@@ -33,44 +33,6 @@ void parse(int argc, char *argv[]){
     throw "Invalid arguments";
 }
 
-void write_bits(string bits, ofstream& out){
-    int i = 0;
-    int size = bits.size();
-    while(i < size){
-        char c = 0;
-        for(int j = 0; j < 8; j++){
-            if(i+j < size){
-                c = c << 1;
-                if(bits[i+j] == '1') c = c | 1;
-            }else break;
-        }
-        out << c;
-        i += 8;
-    }
-}
-
-string read_bits(ifstream& in, int extra_bits){
-    if (extra_bits == 8) extra_bits = 0;
-
-    string bits = "";
-    char c;
-    int i;
-    
-    while(in.get(c)){
-        for(i = 7; i >= 0; i--){
-            char bit = ((c >> i) & 1) ? '1' : '0';
-            bits += bit;
-        }
-    }
-    
-    //Remove extra bits
-    int size = bits.size();
-    if (extra_bits != 0)
-        for (int i = size - 9 + extra_bits; i < size - extra_bits; i++) bits[i] = bits[i+1];
-
-    return bits.substr(0, size - extra_bits);
-}
-
 void write_table(Node* ascii, ofstream& out){
     for(int i = 0; i < 256; i++){
         if(ascii[i].getFreq() != 0){
@@ -108,13 +70,13 @@ int main(int argc, char *argv[]){
 
             //Create heap and Huffman tree
             MinHeap<Node> heap(ascii,256);
-            Huffman code(heap);
-            string Code = code.code(text);
+            Huffman Encode(heap);
+            string Code = Encode.code(text);
             //write the code in a binary file
             int extra_bits = 8 - Code.size() % 8;
             ofstream out(Fout, ios::out | ios::binary);
             out << extra_bits;
-            write_bits(Code, out);
+            Encode.write_bits(Code, out);
             out.close();
 
             //Write table in a file
@@ -140,7 +102,7 @@ int main(int argc, char *argv[]){
             if (!in.is_open()) throw "File not found";
             char extra_bits;
             in.get(extra_bits);
-            string code = read_bits(in, extra_bits - '0');
+            string code = key.read_bits(in, extra_bits - '0');
             in.close();
 
             string original = key.decode(code);

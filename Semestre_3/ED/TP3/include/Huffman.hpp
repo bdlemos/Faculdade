@@ -2,6 +2,7 @@
 #define HUFFMAN
 
 #include <iostream>
+#include <fstream>
 #include <MinHeap.hpp>
 #include <Node.hpp>
 
@@ -16,5 +17,7 @@ class Huffman {
         void print_codes(Node* node, string code);
         std::string code(std::string letra);
         std::string decode(std::string code);
+        void write_bits(std::string bits, std::ofstream& out);
+        std::string read_bits(std::ifstream& in, int extra_bits);
 };
 #endif
