@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Huffman::Huffman(std::string Fin, std::string Fout, std::string Table , char opt){
+Huffman::Huffman(string Fin, string Fout, string Table , char opt){
     if(opt == 'c'){
         Encode(Fin, Fout);
     }else if(opt == 'd'){
@@ -20,7 +20,7 @@ void Huffman::Build_tree(MinHeap<Node>& heap){
         aux = heap.ExtractMin();
         Node* right = new Node(aux.getLetter(), aux.getFreq(), aux.getLeft(), aux.getRight());
 
-        Node node = Node("", left->getFreq() + right->getFreq());
+        Node node = Node(0, left->getFreq() + right->getFreq());
         node.setLeft(left);
         node.setRight(right);
         heap.Insert(node);
@@ -44,7 +44,7 @@ void Huffman::Delete_tree(Node* node){
 string Huffman::Code(string Letter){
     string code = "";
     for(auto i : Letter){
-        code += Get_code(root, string(1,i), "");
+        code += Get_code(root, i, "");
     }
     return code;
 }
@@ -58,7 +58,7 @@ string Huffman::DecodedString(string code){
         }else{
             aux = aux->getRight();
         }
-        if(aux->getLetter() != ""){
+        if(aux->getLetter() != 0){
             word += aux->getLetter();
             aux = root;
         }
@@ -66,7 +66,7 @@ string Huffman::DecodedString(string code){
     return word;
 }
 
-string Huffman::Get_code(Node* node, string Letter, string code){
+string Huffman::Get_code(Node* node, char Letter, string code){
     if(node != nullptr){
         if(node->getLetter() == Letter){
             return code;
@@ -116,22 +116,21 @@ string Huffman::Read_bits(ifstream& in, int extra_bits){
     //Remove extra bits
     int size = bits.size();
     if (extra_bits != 0)
-        for (int i = size - 9 + extra_bits; i < size - extra_bits; i++) bits[i] = bits[i+1];
-
-    return bits.substr(0, size - extra_bits);
+        bits.erase(size - 8, extra_bits);
+    return bits;
 }
 
 void Huffman::Encode(string Fin, string Fout){
            
             //Create frequency table
             Node ascii[256];
-            for(int i = 0; i < 256; i++) ascii[i] = Node(string(1,i), 0);
+            for(int i = 0; i < 256; i++) ascii[i] = Node(i, 0);
             
             //Read file
             ifstream in(Fin);
             if (!in.is_open()) throw "File not found";
             char c;
-            std::string text = "";
+            string text = "";
             while(in.get(c)){
                 ascii[int(c)].setFreq(ascii[int(c)].getFreq()+1);
                 text += c;
@@ -141,7 +140,7 @@ void Huffman::Encode(string Fin, string Fout){
             //Create heap and Huffman tree
             MinHeap<Node> heap(ascii,256);
             Build_tree(heap);
-            std::string StringCode = Code(text);
+            string StringCode = Code(text);
 
             //write the code in a binary file
             int extra_bits = 8 - StringCode.size() % 8;
@@ -158,11 +157,11 @@ void Huffman::Encode(string Fin, string Fout){
             cout << "Sucessfully compressed file\n";
 }
 
-void Huffman::Decode(std::string Fin, std::string Fout ,std::string Table){
+void Huffman::Decode(string Fin, string Fout ,string Table){
 
             //Read table of frequencies
             Node ascii[256];
-            for(int i = 0; i < 256; i++) ascii[i] = Node(string(1,i), 0);
+            for(int i = 0; i < 256; i++) ascii[i] = Node(i, 0);
             std::ifstream table(Table, ios::in);
             Read_table(ascii, table);
             table.close();

@@ -12,7 +12,7 @@ class Huffman {
         //Delete tree
         void Delete_tree(Node* node);
         //Receive a char and return the code
-        std::string Get_code(Node* node, std::string character, std::string code);
+        std::string Get_code(Node* node, char character, std::string code);
         //Receive a char and return the code
         std::string Code(std::string character);
         //Receive a code and return the string

@@ -5,10 +5,10 @@ class Node {
     private:
         Node* left;
         Node* right;
-        string Letter;
+        char Letter;
         int freq;
     public:
-        Node(string Letter = "", int freq = 0, Node* left = nullptr, Node* right = nullptr){
+        Node(char Letter = 0, int freq = 0, Node* left = nullptr, Node* right = nullptr){
             this->Letter = Letter;
             this->freq = freq;
             this->left = left;
@@ -18,7 +18,7 @@ class Node {
         Node* getRight(){return right;}
         void setLeft(Node* left){this->left = left;}
         void setRight(Node* right){this->right = right;}
-        string getLetter(){return Letter;}
+        char getLetter(){return Letter;}
         int getFreq(){return freq;}
         void setFreq(int freq){this->freq = freq;}
         bool operator>(Node& other){

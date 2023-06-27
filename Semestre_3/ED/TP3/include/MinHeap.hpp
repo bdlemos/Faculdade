@@ -10,7 +10,7 @@ template <class T>
 class MinHeap {
     private:
         T* v;
-        int maxSize = 1000000;
+        int maxSize = 256;
         int size = 0;
 
         void Troca(T* a, T* b){
@@ -53,7 +53,7 @@ class MinHeap {
 
     public:
         MinHeap(T* v, int t){
-            if(t > maxSize) throw "Tamanho do vetor excede o limite";
+            if(t > maxSize) throw "Size exceeds maximum size";
             
             this->v = new T[maxSize];
             for (int i = 0; i < t; i++)
