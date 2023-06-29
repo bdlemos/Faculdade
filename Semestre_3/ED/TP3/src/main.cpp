@@ -2,6 +2,7 @@
 #include <MinHeap.hpp>
 #include <Huffman.hpp>
 #include <Node.hpp>
+#include <chrono>
 
 using namespace std;
 
@@ -35,9 +36,18 @@ int main(int argc, char *argv[]){
     try{
         parse(argc, argv);
         if (opt == 'c'){
+            //tr -dc "A-Za-z 0-9" < /dev/urandom | fold -w100|head -n 10000 > bigfile.txt
+            auto start = chrono::high_resolution_clock::now();
             Huffman huffman(Fin, Fout);
+            auto end = chrono::high_resolution_clock::now();
+            auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
+            cout << "Time: " << duration.count() << "ms" << endl;
         }else if (opt == 'd'){
+            auto start = chrono::high_resolution_clock::now();
             Huffman huffman(Fin, Fout, coded, opt);
+            auto end = chrono::high_resolution_clock::now();
+            auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
+            cout << "Time: " << duration.count() << "ms" << endl;
         }
     }catch(const char* e){
         cout << e << endl;

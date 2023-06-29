@@ -41,15 +41,15 @@ void Huffman::Delete_tree(Node* node){
     }
 }
 
-string Huffman::Code(string Letter){
+string Huffman::Code(string& Letter){
     string code = "";
     for(auto i : Letter){
-        code += Get_code(root, i, "");
+        code += AsciiCodes[int(i)];
     }
     return code;
 }
 
-string Huffman::DecodedString(string code){
+string Huffman::DecodedString(string& code){
     string word = "";
     Node* aux = root;
     for(auto i : code){
@@ -83,7 +83,7 @@ string Huffman::Get_code(Node* node, char Letter, string code){
     return "";
 }
 
-void Huffman::Write_bits(string bits, ofstream& out){
+void Huffman::Write_bits(string& bits, ofstream& out){
     int i = 0;
     int size = bits.size();
     while(i < size){
@@ -136,12 +136,13 @@ void Huffman::Encode(string Fin, string Fout){
                 text += c;
             }
             in.close();
-
             //Create heap and Huffman tree
             MinHeap<Node> heap(ascii,256);
+            
             Build_tree(heap);
-            string StringCode = Code(text);
+            Fullfill_table();
 
+            string StringCode = Code(text);
             //write the code in a binary file
             int extra_bits = 8 - StringCode.size() % 8;
             ofstream out(Fout, ios::out | ios::binary);
@@ -201,4 +202,9 @@ void Huffman::Read_table(Node* ascii, ifstream& in){
     while(in >> i >> freq){
         ascii[i].setFreq(freq);
     }
+}
+
+void Huffman::Fullfill_table(){
+    for (int i = 0; i < 256; i++)
+        AsciiCodes[i] = Get_code(root, i, "");
 }

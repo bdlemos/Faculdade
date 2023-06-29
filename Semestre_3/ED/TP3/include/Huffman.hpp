@@ -9,16 +9,20 @@
 class Huffman {
     private:
         Node* root;
+        std::string AsciiCodes[256];
+        
+        //Fill the table of codes of chars
+        void Fullfill_table();
         //Delete tree
         void Delete_tree(Node* node);
         //Receive a char and return the code
         std::string Get_code(Node* node, char character, std::string code);
-        //Receive a char and return the code
-        std::string Code(std::string character);
+        //Receive a text and return the code
+        std::string Code(std::string& character);
         //Receive a code and return the string
-        std::string DecodedString(std::string code);
+        std::string DecodedString(std::string& code);
         //Receive a strinf of bits and write bits in file
-        void Write_bits(std::string bits, std::ofstream& out);
+        void Write_bits(std::string& bits, std::ofstream& out);
         //Receive a file and return a string of bits
         std::string Read_bits(std::ifstream& in, int extra_bits);
         //Build the tree of ocorrrences of chars

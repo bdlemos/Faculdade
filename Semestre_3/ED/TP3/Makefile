@@ -12,7 +12,7 @@ EXE = $(BIN)/main
 
 run:  $(EXE)
 	  clear
-	  $(EXE) -c text.txt code.bin
+	  $(EXE) -c bible.txt code.bin
 	  $(EXE) -d code.bin decoded.txt  table.txt
 
 $(BIN)/main: $(OBJS)
