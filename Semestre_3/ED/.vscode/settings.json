@@ -86,7 +86,8 @@
         "semaphore": "cpp",
         "span": "cpp",
         "stop_token": "cpp",
-        "syncstream": "cpp"
+        "syncstream": "cpp",
+        "filesystem": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

@@ -163,7 +163,8 @@ void Huffman::Decode(string Fin, string Fout ,string Table){
             //Read table of frequencies
             Node ascii[256];
             for(int i = 0; i < 256; i++) ascii[i] = Node(i, 0);
-            std::ifstream table(Table, ios::in);
+            ifstream table(Table, ios::in);
+            if (!table.is_open()) throw "Table of ocorruencies not found, please compress the file first";
             Read_table(ascii, table);
             table.close();
 

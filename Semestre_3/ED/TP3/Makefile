@@ -11,9 +11,6 @@ CFLAGS = -Wall -c -I $(INC)
 EXE = $(BIN)/main
 
 run:  $(EXE)
-	  clear
-	  $(EXE) -c bible.txt code.bin
-	  $(EXE) -d code.bin decoded.txt  table.txt
 
 $(BIN)/main: $(OBJS)
 	$(CC) -o $(BIN)/main $(OBJS) $(LIBS)

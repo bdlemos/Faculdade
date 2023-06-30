@@ -21,11 +21,11 @@ void parse(int argc, char *argv[]){
             return;
         }
         else if(string(argv[i]) == "-d") {
-            if(i + 3 >= argc) throw "Invalid arguments";
+            if(i + 2 >= argc) throw "Invalid arguments";
             opt = 'd';
             Fin = argv[i+1];
             Fout = argv[i+2];
-            coded = argv[i+3];
+            coded = "table.txt";
             return;
         }
     }
