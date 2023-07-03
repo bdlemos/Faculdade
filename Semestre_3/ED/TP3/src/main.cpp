@@ -9,7 +9,6 @@ using namespace std;
 char opt;
 string Fin;
 string Fout;
-string coded;
 
 void parse(int argc, char *argv[]){
     for(int i = 0; i < argc; i++){
@@ -25,7 +24,6 @@ void parse(int argc, char *argv[]){
             opt = 'd';
             Fin = argv[i+1];
             Fout = argv[i+2];
-            coded = "table.txt";
             return;
         }
     }
@@ -36,7 +34,6 @@ int main(int argc, char *argv[]){
     try{
         parse(argc, argv);
         if (opt == 'c'){
-            //tr -dc "A-Za-z 0-9" < /dev/urandom | fold -w100|head -n 10000 > bigfile.txt
             auto start = chrono::high_resolution_clock::now();
             Huffman huffman(Fin, Fout);
             auto end = chrono::high_resolution_clock::now();
@@ -44,7 +41,7 @@ int main(int argc, char *argv[]){
             cout << "Time: " << duration.count() << "ms" << endl;
         }else if (opt == 'd'){
             auto start = chrono::high_resolution_clock::now();
-            Huffman huffman(Fin, Fout, coded, opt);
+            Huffman huffman(Fin, Fout, opt);
             auto end = chrono::high_resolution_clock::now();
             auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
             cout << "Time: " << duration.count() << "ms" << endl;

@@ -2,11 +2,14 @@
 
 using namespace std;
 
-Huffman::Huffman(string Fin, string Fout, string Table , char opt){
+Huffman::Huffman(string Fin, string Fout, char opt){
     if(opt == 'c'){
         Encode(Fin, Fout);
     }else if(opt == 'd'){
-        Decode(Fin, Fout, Table);
+        string tableName = Fin;
+        tableName.erase(tableName.find_last_of("."), tableName.size() - tableName.find_last_of("."));
+        tableName += "Table.txt";
+        Decode(Fin, Fout, tableName);
     }else{
         throw "Invalid option";
     }
@@ -151,7 +154,11 @@ void Huffman::Encode(string Fin, string Fout){
             out.close();
 
             //Write table in a file
-            ofstream table("table.txt", ios::out);
+            string tableName = Fout;
+            tableName.erase(tableName.find_last_of("."), tableName.size() - tableName.find_last_of("."));
+            tableName += "Table.txt";
+
+            ofstream table(tableName, ios::out);
             Write_table(ascii, table);
             table.close();
 
@@ -159,7 +166,6 @@ void Huffman::Encode(string Fin, string Fout){
 }
 
 void Huffman::Decode(string Fin, string Fout ,string Table){
-
             //Read table of frequencies
             Node ascii[256];
             for(int i = 0; i < 256; i++) ascii[i] = Node(i, 0);

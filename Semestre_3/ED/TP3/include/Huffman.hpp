@@ -35,7 +35,7 @@ class Huffman {
         //Has 2 modes: compress and decompress, the default is compress
         //Compress: Receive a file to compress and a file to write the compressed file
         //Decompress:  Receive a compressed file, a file to write the decompressed file, a table of ocorrrences and the option 'd'
-        Huffman(std::string Fin, std::string Fout, std::string Table = "", char opt = 'c');
+        Huffman(std::string Fin, std::string Fout, char opt = 'c');
         ~Huffman();
         //Compress a file
         //Receive a file to compress and a file to write the compressed file
