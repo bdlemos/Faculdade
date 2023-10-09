@@ -55,43 +55,45 @@ vector<int> dijkstra_distancia(vector<vector<pair<int,info>>> adj, int vertice){
 }
 
 //Questao 2
-//Dijkstra para calcular o menor tempo possivel e salva o ano de cada aresta usada no vetor "parent"
-vector<int> dijkstra_year(vector<vector<pair<int,info>>> adj, int vertice){
+//Prim para calcular o menor tempo possivel e salva o tempo de cada aresta percorrida no vetor "year" e o retorna
+vector<int> Prim_Year(vector<vector<pair<int,info>>> adj, int vertice){
+
+    int maior = -1;
     visited.assign(adj.size(),false);
     vector<int> year(adj.size(),INF);
-    
-    year[vertice] = 0;
-    parent[vertice] = vertice;
 
+
+    year[vertice] = 0;
     priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
     pq.push(make_pair(0, vertice));
 
     while(!pq.empty()){
-        int u = pq.top().second;
+        int edge_year = pq.top().first; // ano da aresta
+        int u = pq.top().second; // vertice
         pq.pop();
+
         if (visited[u]) continue;
-        visited[u] = true;
         
+        if(edge_year > maior) maior = edge_year; // salva o maior ano percorrido
+        year[u] = edge_year; // salva o ano da aresta no vertice destino
+        visited[u] = true;
+
         for(auto n: adj[u]){
-            if(visited[n.first]) continue;
-            
+            if (visited[n.first]) continue;
             int v = n.first;
             auto w = n.second;
-            if(year[v] > year[u] + w.year){
-                parent[v] = w.year;
-                year[v] = year[u] + w.year;
-                pq.push(make_pair(year[v], v));
+            pq.push(make_pair(w.year, v));
             }
-        }
     }
+    cout << maior << endl;
     return year;
 }
 
 
 //Questao 3
-//Dijkstra para calcular o menor preco possivel de cada vertice e o custo total e a soma desse vetor retornado
-vector<int> dijkstra_preco(vector<vector<pair<int,info>>> adj, int vertice){
-
+//Prim para calcular o menor preco possivel de cada vertice e salva o preco de cada aresta percorrida no vetor "price" e o retorna
+vector<int> Prim_Price(vector<vector<pair<int,info>>> adj, int vertice){
+    int sum = 0;
     visited.assign(adj.size(),false);
     vector<int> price(adj.size(),INF);
 
@@ -101,18 +103,24 @@ vector<int> dijkstra_preco(vector<vector<pair<int,info>>> adj, int vertice){
     pq.push(make_pair(0, vertice));
 
     while(!pq.empty()){
-        int u = pq.top().second;
+        int edge_price = pq.top().first; // preco da aresta
+        int u = pq.top().second; // vertice
         pq.pop();
+
         if (visited[u]) continue;
+
+        sum += edge_price; // salva o preço total
+        price[u] = edge_price; // salva o preco da aresta no vertice destino
         visited[u] = true;
+
         for(auto n: adj[u]){
             if (visited[n.first]) continue;
             int v = n.first;
             auto w = n.second;
-            price[v] = min(price[v], w.price);
-            pq.push(make_pair(price[v], v));
+            pq.push(make_pair(w.price, v));
             }
     }
+    cout << sum << endl;
     return price;
 }
 
@@ -150,11 +158,12 @@ int main(){
     cout << *max_element(parent.begin(), parent.end()) << endl;
 
     //Pergunta 2
-    vector<int> year = dijkstra_year(adj, 0);
-    cout << *max_element(parent.begin(), parent.end()) << endl;
+    vector<int> year = Prim_Year(adj, 0);
+    //print parent
+    //cout << *max_element(year.begin(), year.end()) << endl;
 
     //Pergunta 3
-    vector<int> price = dijkstra_preco(adj, 0);
-    cout << sum(price) << endl;
+    vector<int> price = Prim_Price(adj, 0);
+    //cout << sum(price) << endl;
     return 0;
 }
