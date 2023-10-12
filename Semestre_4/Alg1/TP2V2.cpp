@@ -1,23 +1,24 @@
 #include <bits/stdc++.h>
 
-const int INF = 1000000000;
+const long long INF = 10e12;
+typedef long long ll;
 
 using namespace std;
 
-vector<pair<int,int>> conjuntos;
+vector<pair<ll,ll>> conjuntos;
 vector<bool> visited;
-vector<int> parent;
+vector<ll> parent;
 
 struct info{
-    int year, dist, price;
+    ll year, dist, price;
 };
 
 // DSU
 void make_set(){
-    for (int i = 0; i < conjuntos.size(); i++) conjuntos[i] = make_pair(i, 1);
+    for (ll i = 0; i < conjuntos.size(); i++) conjuntos[i] = make_pair(i, 1);
 }
 
-pair<int,int> find(int i){
+pair<ll,ll> find(ll i){
     if(i != conjuntos[i].first){
         conjuntos[i] = find(conjuntos[i].first);
     }
@@ -25,7 +26,7 @@ pair<int,int> find(int i){
 }
 
 
-void Union(int a, int b){
+void Union(ll a, ll b){
     if(find(a).second < find(b).second) Union(b,a);
     auto z = find(a), x = find(b);
     conjuntos[x.first] = make_pair(z.first, z.second + x.second);
@@ -34,41 +35,48 @@ void Union(int a, int b){
 // end DSU
 
 
-vector<pair<pair<int,int>,info>> flatten(vector<vector<pair<int,info>>> adj){
-    vector<pair<pair<int,int>,info>> aux;
-    for (int i = 0; i < adj.size(); i++){
-        for (int j = 0; j < adj[i].size(); j++){
+vector<pair<pair<ll,ll>,info>> flatten(vector<vector<pair<ll,info>>> adj){
+    vector<pair<pair<ll,ll>,info>> aux;
+    for (ll i = 0; i < adj.size(); i++){
+        for (ll j = 0; j < adj[i].size(); j++){
             aux.push_back(make_pair(make_pair(i,adj[i][j].first), adj[i][j].second));
         }
     }
     return aux;
 }
 
-vector<int> dijkstra_distancia(vector<vector<pair<int,info>>> adj, int vertice){
+//Questao 1
+//Dijkstra para calcular a distancia minima e salva o custo de cada aresta usada no vetor "parent"
+vector<ll> dijkstra_distancia(vector<vector<pair<ll,info>>> adj, ll vertice){
     visited.assign(adj.size(),false);
-    vector<int> dist(adj.size(),INF);
+    vector<ll> dist(adj.size(),INF);
     
     dist[vertice] = 0;
     parent[vertice] = vertice;
-
-    priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
-    pq.push(make_pair(0, vertice));
+    
+    //PQ é uma fila de prioridade que é ordenada pela distancia acumulada e o desempate é o tempo da aresta, 
+    //por isso o primeiro elemento de cada par é um par, onde o primeiro é
+    // a distancia e o segundo é o tempo da ultima aresta
+    priority_queue<pair<pair<ll,ll>,ll>, vector<pair<pair<ll,ll>,ll>>, greater<pair<pair<ll,ll>,ll>>> pq;
+    pq.push(make_pair(make_pair(0,0), vertice));
 
     while(!pq.empty()){
-        int u = pq.top().second;
+        auto peso = pq.top().first;
+        ll u = pq.top().second;
         pq.pop();
         if (visited[u]) continue;
+
         visited[u] = true;
+        dist[u] = peso.first;
+        parent[u] = peso.second;
         
         for(auto n: adj[u]){
             if(visited[n.first]) continue;
             
-            int v = n.first;
+            ll v = n.first;
             auto w = n.second;
             if(dist[v] > dist[u] + w.dist){
-                parent[v] = w.year;
-                dist[v] = dist[u] + w.dist;
-                pq.push(make_pair(dist[v], v));
+                pq.push(make_pair(make_pair(dist[u] + w.dist,w.year), v));
             }
         }
     }
@@ -76,15 +84,15 @@ vector<int> dijkstra_distancia(vector<vector<pair<int,info>>> adj, int vertice){
 }
 
 //Faz o kruskal e printa o ano maximo
-void kruskal_year(vector<pair<pair<int,int>,info>> adj){
+void kruskal_year(vector<pair<pair<ll,ll>,info>> adj){
     make_set();
 
-    sort(adj.begin(), adj.end(), [](const pair<pair<int,int>,info> &a, const pair<pair<int,int>,info> &b){
+    sort(adj.begin(), adj.end(), [](const pair<pair<ll,ll>,info> &a, const pair<pair<ll,ll>,info> &b){
         return a.second.year < b.second.year;
     });
-    int max = -1;
+    ll max = -1;
     for(auto i: adj){
-        pair<pair<int,int>,info> aux = i;
+        pair<pair<ll,ll>,info> aux = i;
         if(find(aux.first.first) != find(aux.first.second)){
             Union(aux.first.first, aux.first.second);
             if(aux.second.year > max) max = aux.second.year;
@@ -94,14 +102,14 @@ void kruskal_year(vector<pair<pair<int,int>,info>> adj){
 }
 
 //Faz o kruskal e printa o custo minimo
-void kruskal_price(vector<pair<pair<int,int>,info>> adj){
+void kruskal_price(vector<pair<pair<ll,ll>,info>> adj){
     make_set();
-    int custo = 0;
-    sort(adj.begin(), adj.end(), [](const pair<pair<int,int>,info> &a, const pair<pair<int,int>,info> &b){
+    ll custo = 0;
+    sort(adj.begin(), adj.end(), [](const pair<pair<ll,ll>,info> &a, const pair<pair<ll,ll>,info> &b){
         return a.second.price < b.second.price;
     });
     for(auto i: adj){
-        pair<pair<int,int>,info> aux = i;
+        pair<pair<ll,ll>,info> aux = i;
         if(find(aux.first.first) != find(aux.first.second)){
             Union(aux.first.first, aux.first.second);
             custo += aux.second.price;
@@ -111,21 +119,22 @@ void kruskal_price(vector<pair<pair<int,int>,info>> adj){
 }
 
 int main(){
-    int num_vertices; cin >> num_vertices;
-    int num_edges; cin >> num_edges;
+    ll num_vertices;
+    ll num_edges;
+    scanf("%lld", &num_vertices);
+    scanf("%lld", &num_edges);
 
     // Cria a matriz de adjacencia
-    vector<vector<pair<int,info>>> adj(num_vertices);
+    vector<vector<pair<ll,info>>> adj(num_vertices);
     conjuntos.resize(num_vertices);
     parent.resize(num_vertices);
     visited.resize(num_vertices);
 
     //Preenche a matriz de adjacencia
-    for (int i = 0; i < num_edges; i++){
-        int a,b; cin >> a >> b;
+    for (ll i = 0; i < num_edges; i++){
+        ll a,b; scanf("%lld%lld", &a,&b);
         
-        int year, dist, price;
-        cin >> year >> dist >> price;
+        ll year, dist, price; scanf("%lld%lld%lld", &year, &dist, &price);
 
         info aux = {year, dist, price};
         adj[a-1].push_back(make_pair(b-1, aux));
@@ -133,7 +142,7 @@ int main(){
 
     }
 
-    vector<int> dist = dijkstra_distancia(adj, 0);
+    vector<ll> dist = dijkstra_distancia(adj, 0);
     for(auto i: dist) cout << i << '\n';
     cout << *max_element(parent.begin(), parent.end()) << endl;
     
