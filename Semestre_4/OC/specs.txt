@@ -1,0 +1,8 @@
+Nomes: Beatriz Reis Gama Barbosa (2022043922); Bernardo Dutra Lemos (2022043949); João Lucas Simões Moreira
+Instruções para execução: a execução deve estar na forma ./a.out <cache_size> <line_size> <group_size> <input file name>
+exemplo: ./a.out 4096 1024 2 input.txt
+Considerações adicionais: para implementar a associatividade por conjunto, o critério utilizado pelo grupo para a criação do índice
+consistiu em dividir o tamanho da cache pelo tamanho da linha, de maneira a identificar quantas linhas existem ao todo; em seguida, 
+dividir o número de linhas pelo tamanho do bloco, para saber quantos conjuntos teriamos; tirar log2 deste número
+para descobrir o tamanho do índice em bits; em seguida, extrair do endereço em binario o indice de acordo com o numero de bits necessarios;
+por fim, tirar o mod deste numero com o numero de sets, para descobrir qual o indice do endereço atual.

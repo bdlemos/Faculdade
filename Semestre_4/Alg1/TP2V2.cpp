@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 
-const long long INF = 10e12;
+const long long INF = LLONG_MAX;
 typedef long long ll;
 
 using namespace std;
@@ -75,7 +75,8 @@ vector<ll> dijkstra_distancia(vector<vector<pair<ll,info>>> adj, ll vertice){
             
             ll v = n.first;
             auto w = n.second;
-            if(dist[v] > dist[u] + w.dist){
+            if(dist[v] >= dist[u] + w.dist){
+                dist[v] = dist[u] + w.dist;
                 pq.push(make_pair(make_pair(dist[u] + w.dist,w.year), v));
             }
         }
