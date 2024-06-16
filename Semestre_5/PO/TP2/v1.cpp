@@ -114,7 +114,7 @@ void pivotTableau(int pivotRow, int pivotCol, int tablo) {
     // Transformar o pivô em 1 dividindo a linha inteira pelo valor do pivô
     double pivotValue = (*matriz)[pivotRow][pivotCol];
     if (abs(pivotValue) > EPSILON) {
-        for (int j = 0; j < tamanho_real_col_auxiliar; j++) {
+        for (int j = 0; j < size; j++) {
             (*matriz)[pivotRow][j] /= pivotValue;
         }
     }
@@ -123,7 +123,7 @@ void pivotTableau(int pivotRow, int pivotCol, int tablo) {
     for (int i = 0; i < n + 1; i++) {
         if (i != pivotRow) {
             double factor = (*matriz)[i][pivotCol];
-            for (int j = 0; j < tamanho_real_col_auxiliar; ++j) {
+            for (int j = 0; j < size; ++j) {
                 (*matriz)[i][j] -= factor * (*matriz)[pivotRow][j];
                 // Corrigir erros de precisão de ponto flutuante
                 if (abs((*matriz)[i][j]) < EPSILON) {
