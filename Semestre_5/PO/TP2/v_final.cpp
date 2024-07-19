@@ -11,7 +11,7 @@
 using namespace std;
 
 const double MIN = numeric_limits<double>::lowest();
-const double EPSILON = 1e-6;
+const double EPSILON = 1e-9;
 
 vector<vector<double>> tableau1(MAX_SIZE, vector<double>(MAX_SIZE,0)); // Auxiliar
 vector<vector<double>> tableau2(MAX_SIZE, vector<double>(MAX_SIZE,0)); // Principal
@@ -141,7 +141,6 @@ vector<int> SimplexAux(){
     vector<int> base_hot(tamanho_real_col_auxiliar,0);
     //Forma canonica.
     for(int i = m+n-1, j = 0; i < base_hot.size()-2; i++, j++) {
-
         base_hot[i+1]=1;
         pivotTableau(j+1,i+1,1);
     }
@@ -153,13 +152,13 @@ vector<int> SimplexAux(){
         int pos=-1, var_entra=-1;
         for (int i = n; i < tamanho_real_col_auxiliar-1; i++){
             //Escolhe a que sai da base
-            if(tableau1[0][i] < 0){
+            if(tableau1[0][i] < -EPSILON){
                 var_entra = i;
                 //Encontra a linha
                 for(int j = 1; j <= n ; j ++){
                     if (abs(tableau1[j][i]) < EPSILON) continue;
                     double val = tableau1[j][tamanho_real_col_auxiliar-1] / tableau1[j][i];
-                    if(tableau1[j][i] > 0 and  val < min) min = val, pos = j;
+                    if(tableau1[j][i] > EPSILON and  val < min) min = val, pos = j;
                 }
                 break;
             }
@@ -221,13 +220,13 @@ void SimplexPrincipal(){
         int pos=-1, var_entra=-1;
         for (int i = n; i < tamanho_real_col_principal-1; i++){
             //Escolhe a que sai da base
-            if(tableau2[0][i] < 0){
+            if(tableau2[0][i] < -EPSILON){
                 var_entra = i;
                 //Encontra a linha
                 for(int j = 1; j <= n ; j ++){
                     if (abs(tableau2[j][i]) < EPSILON) continue;
                     double val = tableau2[j][tamanho_real_col_principal-1] / tableau2[j][i];
-                    if(tableau2[j][i] > 0 and  val < min) min = val, pos = j;
+                    if(tableau2[j][i] > EPSILON and  val < min) min = val, pos = j;
 
                     if(j==n and pos==-1) ilimitado = true, coluna_ilimitada = i;
                 }
@@ -288,7 +287,7 @@ void recupera_certificado_otimo(){
 // Recupera o certificado inviavel que está na linha 0, entre as colunas 0 e n da matriz tableau1
 void recupera_certificado_inviavel(){
     for (int i = 0; i < n; i++){
-        cout << tableau1[0][i] << ' ';
+        cout << -tableau1[0][i] << ' ';
     }
 }
 
@@ -313,12 +312,12 @@ int main(){
 
     // Numero de restriçoes e Variaveis
     // m é o numero de variaveis e n é o numero de restriçoes
-    cin >> m >> n;
+    cin >> n >> m;
     Monta_tableau_principal(); 
     Monta_tableau_auxiliar();  
-    //print_auxiliar();
 
     base_inicial = SimplexAux();
+    cout << setprecision(3) << fixed;
 
     if(existe_sol){
         SimplexPrincipal();
@@ -339,7 +338,6 @@ int main(){
         recupera_certificado_inviavel();
     }
     cout << endl;
-    //print_auxiliar();
-    //print_principal();
+
     return 0;
 }
