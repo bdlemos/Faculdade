@@ -4,7 +4,7 @@
 #include <iomanip>
 #include <limits>
 
-#define MAX_SIZE 10e3
+#define MAX_SIZE 5e3
 
 
 
@@ -287,7 +287,7 @@ void recupera_certificado_otimo(){
 // Recupera o certificado inviavel que está na linha 0, entre as colunas 0 e n da matriz tableau1
 void recupera_certificado_inviavel(){
     for (int i = 0; i < n; i++){
-        cout << -tableau1[0][i] << ' ';
+        cout << tableau1[0][i] << ' ';
     }
 }
 
@@ -338,6 +338,7 @@ int main(){
         recupera_certificado_inviavel();
     }
     cout << endl;
+    print_auxiliar();
 
     return 0;
 }

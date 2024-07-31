@@ -1,73 +1,95 @@
 ## Recebe uma entrada e monta o tableau utilizando apenas listas
 
 import sys
+import numpy as np
 
-def main():
+def read_pl():
     # Le de um diretorio
     with open(sys.argv[1], 'r') as f:
         entrada = f.read().split('\n')
     for i in range(len(entrada)):
-        entrada[i] = entrada[i].split(' ')
-    
+        if entrada[i] != '':
+            entrada[i] = entrada[i].split(' ')
     # Le o numero de variaveis e restricoes
-    n, m = map(int, entrada[0])
-
+    n, m = map(int, [i for i in entrada[0] if i != ''])
+    #print(entrada)
     # Le a funcao objetivo
-    fo = list(map(int, entrada[1]))
-
+    fo = list(map(float, entrada[1]))
     # Le as restricoes
-    restricoes = [list(map(int, linha)) for linha in entrada[2:2+m]]
+    restricoes = [list(map(float, linha)) for linha in entrada[2:2+n] if linha != '']
 
     # Le os valores de b
-    b = list(restricoes[i].pop() for i in range(n))
+    b = list(i.pop() for i in restricoes)
 
-    return fo, restricoes, b
+    return np.array(fo), np.array(restricoes), np.array(b)
 
-def Simplex_2Fases(fo, restricoes, b):
-    # Tornar b>=0
-    for i in range(len(b)):
-        if b[i] < 0:
-            restricoes[i] = [-x for x in restricoes[i]]
-            b[i] *= -1
+def read_certificate(file):
+    # Le de um diretorio
+    with open(file, 'r') as f:
+        entrada = f.read().split('\n')
+    return (entrada[0],[float(i) for i in entrada[1].split(' ') if i != ''])
 
-    #Encontrar a base viavel
-
-    ans = func()
-
-
-def aux_pl(fo, restricoes, b):
-    new_fo = [0]*len(fo) + [-1]*len(restricoes)
-
-
+def verifica_certificado_inviavel(fo, restricoes, b, cert):
+    epsilon = 1e-1
+    # Verifica se o certificado é viável
+    yA = np.dot(cert, restricoes)
+    by = np.dot(b, cert)
+    print(yA, by)
+    for i in yA:
+        if i < -epsilon:
+            return False
+    if by > epsilon:
+        return False
+    return True
+def verifica_certificado_ilimitado(fo, restricoes, cert):
+    epsilon = 1e-9
+    # Verifica se o certificado é viável
     for i in range(len(restricoes)):
-        restricoes[i] = restricoes[i] + [0]*len(restricoes)
-        restricoes[i][len(fo)+i] = 1
+        if len(restricoes[i]) != len(cert):
+            continue
+        if sum([restricoes[i][j]*cert[j] for j in range(len(cert))]) > epsilon and sum([restricoes[i][j]*cert[j] for j in range(len(cert))]) < -epsilon:
+            return False
+    
+    val = sum([fo[j]*cert[j] for j in range(len(cert))])
 
-    new_restricoes = restricoes
-    print(new_fo)
-    print(new_restricoes)
 
-    # # Adicionar variaveis de folga
-    # for i in range(len(restricoes)):
-    #     restricoes[i].append(1 if i == 0 else 0)
-    #     fo.append(0)
-
-    # # Adicionar variaveis de excesso
-    # for i in range(len(restricoes)):
-    #     restricoes[i].append(-1 if i == 0 else 0)
-    #     fo.append(0)
-
-    # # Adicionar variaveis artificiais
-    # for i in range(len(restricoes)):
-    #     restricoes[i].append(1 if i == 0 else 0)
-    #     fo.append(-1)
-
-    return fo, restricoes, b
-
-def func():
-    pass
+    if val <= epsilon:
+        return False
+    return True
+    
 
 
 if __name__ == '__main__':
-    fo, restricoes, b = main()
-    aux_pl(fo, restricoes, b)
+    fo, restricoes, b = read_pl()
+    tipo, cert = read_certificate('certificado.txt')
+
+    file = sys.argv[1].split('/')
+    # file = file[0] + '/sol_' +file[1]
+    # _, marcin = read_certificate(file)
+    print("Meu")
+    if tipo == 'inviavel':
+        if verifica_certificado_inviavel(fo, restricoes, b, cert):
+            print('Certificado viável')
+        else:
+            print('Certificado inviável')
+    elif tipo == 'ilimitada':
+        if verifica_certificado_ilimitado(fo, restricoes, cert):
+            print('Certificado viável')
+        else:
+            print('Certificado inviável')
+    else:
+        print('Tipo de certificado inválido')
+
+    # print("Marcin")
+    # if tipo == 'inviavel':
+    #     if verifica_certificado_inviavel(fo, restricoes, b, marcin):
+    #         print('Certificado viável')
+    #     else:
+    #         print('Certificado inviável')
+    # elif tipo == 'ilimitada':
+    #     if verifica_certificado_ilimitado(fo, restricoes, marcin):
+    #         print('Certificado viável')
+    #     else:
+    #         print('Certificado inviável')
+    # else:
+        # print('Tipo de certificado inválido')
