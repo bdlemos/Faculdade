@@ -3,3 +3,14 @@ Semestre_4/ICV/TP2/data.csv
 *.json
 *.csv
 Semestre_5/CDAF/atividade_5/sample-data-master/data/Sample_Game_3/Sample_Game_3_metadata.xml
+ic/
+Semestre_6/ES/RoteiroRefactoringJS/
+Semestre_6/ES/demo-ci/
+Semestre_6/ES/esmforum/
+Semestre_6/ES/micro-livraria/
+Semestre_6/ES/roteiro-cypress/
+Semestre_6/NLP/Trabalho/Images/
+Semestre_6/NLP/Trabalho/imagens.zip
+Semestre_6/NLP/Trabalho/model/*.h5
+Semestre_6/NLP/Trabalho/model/*.pkl
+Semestre_6/NLP/Trabalho/model/vetor_imagens_vgg_top_false.pkl
