@@ -1,0 +1,1000 @@
+import sys
+from abc import ABC, abstractmethod
+from Expression import *
+import Asm as AsmModule
+
+
+class Visitor(ABC):
+    """
+    The visitor pattern consists of two abstract classes: the Expression and the
+    Visitor. The Expression class defines on method: 'accept(visitor, args)'.
+    This method takes in an implementation of a visitor, and the arguments that
+    are passed from expression to expression. The Visitor class defines one
+    specific method for each subclass of Expression. Each instance of such a
+    subclasse will invoke the right visiting method.
+    """
+    @abstractmethod
+    def visit_var(self, exp, arg):
+        pass
+
+    @abstractmethod
+    def visit_bln(self, exp, arg):
+        pass
+
+    @abstractmethod
+    def visit_num(self, exp, arg):
+        pass
+
+    @abstractmethod
+    def visit_eql(self, exp, arg):
+        pass
+
+    @abstractmethod
+    def visit_and(self, exp, arg):
+        pass
+
+    @abstractmethod
+    def visit_or(self, exp, arg):
+        pass
+
+    @abstractmethod
+    def visit_add(self, exp, arg):
+        pass
+
+    @abstractmethod
+    def visit_sub(self, exp, arg):
+        pass
+
+    @abstractmethod
+    def visit_mul(self, exp, arg):
+        pass
+
+    @abstractmethod
+    def visit_div(self, exp, arg):
+        pass
+
+    @abstractmethod
+    def visit_leq(self, exp, arg):
+        pass
+
+    @abstractmethod
+    def visit_lth(self, exp, arg):
+        pass
+
+    @abstractmethod
+    def visit_neg(self, exp, arg):
+        pass
+
+    @abstractmethod
+    def visit_not(self, exp, arg):
+        pass
+
+    @abstractmethod
+    def visit_let(self, exp, arg):
+        pass
+
+    @abstractmethod
+    def visit_ifThenElse(self, exp, arg):
+        pass
+
+    @abstractmethod
+    def visit_fn(self, exp, arg):
+        pass
+
+    @abstractmethod
+    def visit_app(self, exp, arg):
+        pass
+
+
+class GenVisitor(Visitor):
+    """
+    The GenVisitor class compiles arithmetic expressions into a low-level
+    language.
+    """
+
+    def __init__(self):
+        self.next_var_counter = 0
+        self.var_scope = {}
+
+    def next_var_name(self):
+        self.next_var_counter += 1
+        return f"v{self.next_var_counter}"
+    
+    def _generate_unique_name(self, var_name):
+        """
+        Generates a unique name for the variable to avoid shadowing.
+        """
+        if var_name not in self.var_scope:
+            self.var_scope[var_name] = []
+        
+        # Create a unique name by appending a counter or unique suffix
+        unique_name = f"{var_name}_{len(self.var_scope[var_name])}"
+        
+        # Push the unique name onto the stack for this variable
+        self.var_scope[var_name].append(unique_name)
+        
+        return unique_name
+
+    def _pop_variable(self, var_name):
+        """
+        Pops the variable name off the stack when exiting a scope.
+        """
+        if var_name in self.var_scope and self.var_scope[var_name]:
+            self.var_scope[var_name].pop()
+
+    def _get_current_var_name(self, var_name):
+        """
+        Returns the current variable name (the one on top of the stack).
+        """
+        if var_name in self.var_scope and self.var_scope[var_name]:
+            return self.var_scope[var_name][-1]
+        return var_name  # If no stack entry, return the original name
+
+    def visit_var(self, exp, prog):
+
+        return self._get_current_var_name(exp.identifier)
+
+    def visit_bln(self, exp, prog):
+        """
+        Usage:
+            >>> e = Bln(True)
+            >>> p = AsmModule.Program({}, [])
+            >>> g = GenVisitor()
+            >>> v = e.accept(g, p)
+            >>> p.eval()
+            >>> p.get_val(v)
+            1
+
+            >>> e = Bln(False)
+            >>> p = AsmModule.Program({}, [])
+            >>> g = GenVisitor()
+            >>> v = e.accept(g, p)
+            >>> p.eval()
+            >>> p.get_val(v)
+            0
+        """
+        if exp.bln:
+            var_name = self.next_var_name()
+            prog.add_inst(AsmModule.Addi(var_name, "x0", 1))
+            return var_name
+        else:
+            var_name = self.next_var_name()
+            prog.add_inst(AsmModule.Addi(var_name, "x0", 0))
+            return var_name
+
+    def visit_num(self, exp, prog):
+        """
+        Usage:
+            >>> e = Num(13)
+            >>> p = AsmModule.Program({}, [])
+            >>> g = GenVisitor()
+            >>> v = e.accept(g, p)
+            >>> p.eval()
+            >>> p.get_val(v)
+            13
+        """
+        var_name = self.next_var_name()
+        prog.add_inst(AsmModule.Addi(var_name, "x0", exp.num))
+        return var_name
+
+    def visit_eql(self, exp, prog):
+        """
+        >>> e = Eql(Num(13), Num(13))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        1
+
+        >>> e = Eql(Num(13), Num(10))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        0
+
+        >>> e = Eql(Num(-1), Num(1))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        0
+        """
+        l_name = exp.left.accept(self, prog)
+        r_name = exp.right.accept(self, prog)
+
+        # Calcula a diferença entre os dois números
+        res = self.next_var_name()
+        prog.add_inst(AsmModule.Sub(res, l_name, r_name))
+
+        # Calcula o negativo do resultado
+        neg = self.next_var_name()
+        prog.add_inst(AsmModule.Sub(neg, "x0", res))
+
+        # Verifica se menor que 1, então salva 1 no registrador, senão 0
+        prog.add_inst(AsmModule.Slti(neg, neg, 1))
+        prog.add_inst(AsmModule.Slti(res, res, 1))
+
+        # Calcula o xor entre os dois resultados, se for 1, então são diferentes
+        res3 = self.next_var_name()
+        prog.add_inst(AsmModule.Xor(res3, res, neg))
+
+        # Se for 1, então salva 0, senão 1
+        prog.add_inst(AsmModule.Xori(res3, res3, 1))
+        return res3
+
+    def visit_and(self, exp, prog):
+        """
+        >>> e = And(Bln(True), Bln(True))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        1
+
+        >>> e = And(Bln(False), Bln(True))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        0
+
+        >>> e = And(Bln(True), Bln(False))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        0
+
+        >>> e = And(Bln(False), Bln(False))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        0
+
+        >>> e = And(Bln(False), Div(Num(3), Num(0)))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        0
+        """
+        ans = self.next_var_name()
+
+        exp1 = exp.left.accept(self, prog)
+        beq_end = AsmModule.Beq(exp1, "x0")
+        prog.add_inst(AsmModule.Addi(ans, "x0", 0))
+        prog.add_inst(beq_end)
+
+        exp2 = exp.right.accept(self, prog)
+        prog.add_inst(AsmModule.Addi(ans, exp2, 0))
+        beq_end.set_target(prog.get_number_of_instructions())
+        return ans
+
+    def visit_or(self, exp, prog):
+        """
+        >>> e = Or(Bln(True), Bln(True))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        1
+
+        >>> e = Or(Bln(False), Bln(True))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        1
+
+        >>> e = Or(Bln(True), Bln(False))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        1
+
+        >>> e = Or(Bln(False), Bln(False))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        0
+
+        >>> e = Or(Bln(True), Div(Num(3), Num(0)))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        1
+        """
+        ans = self.next_var_name()
+
+        # Evaluate the first operand
+        exp1 = exp.left.accept(self, prog)
+
+        # If exp1 is true (non-zero), jump to the end
+        beq_end = AsmModule.Beq(exp1, "x0")  # Skip if exp1 is true
+        prog.add_inst(beq_end)
+
+        # Evaluate the second operand
+        exp2 = exp.right.accept(self, prog)
+
+        # Set ans to the result of exp2
+        prog.add_inst(AsmModule.Addi(ans, exp2, 0))
+
+        # Jump to the final label to avoid overwriting ans
+        beq_end2 = AsmModule.Beq("x0", "x0")  # Unconditional jump
+        prog.add_inst(beq_end2)
+
+        # Label for when exp1 is true
+        beq_end.set_target(prog.get_number_of_instructions())
+
+        # Set ans to true (non-zero) if exp1 is true
+        prog.add_inst(AsmModule.Addi(ans, "x0", 1))
+
+        # Final label
+        beq_end2.set_target(prog.get_number_of_instructions())
+
+        return ans
+
+    def visit_add(self, exp, prog):
+        """
+        >>> e = Add(Num(13), Num(-13))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        0
+
+        >>> e = Add(Num(13), Num(10))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        23
+        """
+
+        l_name = exp.left.accept(self, prog)
+        r_name = exp.right.accept(self, prog)
+        v_name = self.next_var_name()
+        prog.add_inst(AsmModule.Add(v_name, l_name, r_name))
+        return v_name
+
+    def visit_sub(self, exp, prog):
+        """
+        >>> e = Sub(Num(13), Num(-13))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        26
+
+        >>> e = Sub(Num(13), Num(10))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        3
+        """
+        l_name = exp.left.accept(self, prog)
+        r_name = exp.right.accept(self, prog)
+        v_name = self.next_var_name()
+        prog.add_inst(AsmModule.Sub(v_name, l_name, r_name))
+        return v_name
+
+    def visit_mul(self, exp, prog):
+        """
+        >>> e = Mul(Num(13), Num(2))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        26
+
+        >>> e = Mul(Num(13), Num(10))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        130
+        """
+        l_name = exp.left.accept(self, prog)
+        r_name = exp.right.accept(self, prog)
+        v_name = self.next_var_name()
+        prog.add_inst(AsmModule.Mul(v_name, l_name, r_name))
+        return v_name
+
+    def visit_div(self, exp, prog):
+        """
+        >>> e = Div(Num(13), Num(2))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        6
+
+        >>> e = Div(Num(13), Num(10))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        1
+        """
+        l_name = exp.left.accept(self, prog)
+        r_name = exp.right.accept(self, prog)
+        v_name = self.next_var_name()
+        prog.add_inst(AsmModule.Div(v_name, l_name, r_name))
+        return v_name
+
+    def visit_leq(self, exp, prog):
+        """
+        >>> e = Leq(Num(3), Num(2))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        0
+
+        >>> e = Leq(Num(3), Num(3))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        1
+
+        >>> e = Leq(Num(2), Num(3))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        1
+
+        >>> e = Leq(Num(-3), Num(-2))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        1
+
+        >>> e = Leq(Num(-3), Num(-3))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        1
+
+        >>> e = Leq(Num(-2), Num(-3))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        0
+        """
+        name_left = exp.left.accept(self, prog)
+        name_right = exp.right.accept(self, prog)
+
+        sub = self.next_var_name()
+        prog.add_inst(AsmModule.Sub(sub, name_left, name_right))
+    
+        res = self.next_var_name()
+        prog.add_inst(AsmModule.Slti(res, sub, 1))
+
+        return res
+
+    def visit_lth(self, exp, prog):
+        """
+        >>> e = Lth(Num(3), Num(2))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        0
+
+        >>> e = Lth(Num(3), Num(3))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        0
+
+        >>> e = Lth(Num(2), Num(3))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        1
+        """
+        name_left = exp.left.accept(self, prog)
+        name_right = exp.right.accept(self, prog)
+        res = self.next_var_name()
+        prog.add_inst(AsmModule.Slt(res, name_left, name_right))
+        return res
+
+    def visit_neg(self, exp, prog):
+        """
+        >>> e = Neg(Num(3))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        -3
+
+        >>> e = Neg(Num(0))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        0
+
+        >>> e = Neg(Num(-3))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        3
+        """
+        new_name = self.next_var_name()
+        old_name = exp.exp.accept(self, prog)
+        prog.add_inst(AsmModule.Sub(new_name, "x0", old_name))
+        return new_name
+
+    def visit_not(self, exp, prog):
+        """
+        >>> e = Not(Bln(True))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        0
+
+        >>> e = Not(Bln(False))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        1
+
+        >>> e = Not(Num(0))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        1
+
+        >>> e = Not(Num(-2))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        0
+
+        >>> e = Not(Num(2))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        0
+        """
+        pos = exp.exp.accept(self, prog)
+        
+        neg = self.next_var_name()
+        prog.add_inst(AsmModule.Sub(neg, "x0", pos))
+
+        comp1 = self.next_var_name()
+        comp2 = self.next_var_name()
+        prog.add_inst(AsmModule.Slti(comp1, pos, 1))
+        prog.add_inst(AsmModule.Slti(comp2, neg, 1))
+
+        res = self.next_var_name()
+        prog.add_inst(AsmModule.Xor(res, comp1, comp2))
+        res2 = self.next_var_name()
+        prog.add_inst(AsmModule.Slti(res2, res, 1))
+
+        return res2
+
+    def visit_let(self, exp, prog):
+        """
+        Usage:
+            >>> e = Let('v', Not(Bln(False)), Var('v'))
+            >>> p = AsmModule.Program({}, [])
+            >>> g = GenVisitor()
+            >>> v = e.accept(g, p)
+            >>> p.eval()
+            >>> p.get_val(v)
+            1
+
+            >>> e = Let('v', Num(2), Add(Var('v'), Num(3)))
+            >>> p = AsmModule.Program({}, [])
+            >>> g = GenVisitor()
+            >>> v = e.accept(g, p)
+            >>> p.eval()
+            >>> p.get_val(v)
+            5
+
+            >>> e0 = Let('x', Num(2), Add(Var('x'), Num(3)))
+            >>> e1 = Let('y', e0, Mul(Var('y'), Num(10)))
+            >>> p = AsmModule.Program({}, [])
+            >>> g = GenVisitor()
+            >>> v = e1.accept(g, p)
+            >>> p.eval()
+            >>> p.get_val(v)
+            50
+        """
+        name_value = exp.exp_def.accept(self, prog)
+
+        unique_name = self._generate_unique_name(exp.identifier)
+        prog.add_inst(AsmModule.Add(unique_name, name_value, 'x0'))
+        ans =  exp.exp_body.accept(self, prog)
+        self._pop_variable(exp.identifier)
+        return ans
+
+    def visit_ifThenElse(self, exp, prog):
+        """
+        >>> e = IfThenElse(Bln(True), Num(3), Num(5))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        3
+
+        >>> e = IfThenElse(Bln(False), Num(3), Num(5))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        5
+
+        >>> e = IfThenElse(And(Bln(True), Bln(True)), Num(3), Num(5))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        3
+
+        >>> e0 = Mul(Num(2), Add(Num(3), Num(4)))
+        >>> e1 = IfThenElse(And(Bln(True), Bln(False)), Num(3), e0)
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e1.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        14
+
+        >>> e0 = Div(Num(2), Num(0))
+        >>> e1 = IfThenElse(Bln(True), Num(3), e0)
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e1.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        3
+
+        >>> e0 = Div(Num(2), Num(0))
+        >>> e1 = IfThenElse(Bln(False), e0, Num(3))
+        >>> p = AsmModule.Program({}, [])
+        >>> g = GenVisitor()
+        >>> v = e1.accept(g, p)
+        >>> p.eval()
+        >>> p.get_val(v)
+        3
+        """
+        cond = exp.cond.accept(self, prog)
+        ans = self.next_var_name()
+
+        beq = AsmModule.Beq(cond, "x0")
+        prog.add_inst(beq)
+        
+        # If true
+        true_if = exp.e0.accept(self, prog)
+        beq_end = AsmModule.Beq("x0", "x0")
+        prog.add_inst(AsmModule.Addi(ans, true_if, 0))
+        prog.add_inst(beq_end)
+
+        beq.set_target(prog.get_number_of_instructions())
+        # If false
+        false_if = exp.e1.accept(self, prog)
+        prog.add_inst(AsmModule.Addi(ans, false_if, 0))
+        beq_end.set_target(prog.get_number_of_instructions())
+
+
+        return ans
+
+    def visit_fn(self, exp, prog):
+
+        addr_var = self.next_var_name()
+
+        beq = AsmModule.Beq("x0", "x0")
+        
+        # Ponto de entrada da função
+        func_address = prog.get_number_of_instructions() + 2
+        prog.add_inst(AsmModule.Addi(addr_var, "x0", func_address))
+        prog.add_inst(beq)
+        # 1. Salvar o endereço de retorno e alocar espaço na pilha
+        prog.add_inst(AsmModule.Addi("sp", "sp", -1))
+        prog.add_inst(AsmModule.Sw("sp", 0, "ra"))
+
+        # 2. Associar o parâmetro da função ao registrador local
+        prog.add_inst(AsmModule.Add(exp.formal, "a0", "x0"))
+
+        # 3. Gerar o corpo da função
+        body = exp.body.accept(self, prog)
+        # 4. Armazenar o valor de retorno no registrador `a0`
+        prog.add_inst(AsmModule.Addi("a0", body, 0))
+
+        # 5. Restaurar o estado da pilha e o endereço de retorno
+        prog.add_inst(AsmModule.Lw("sp", 0, "ra"))
+        prog.add_inst(AsmModule.Addi("sp", "sp", 1))
+
+        # 6. Retornar ao chamador
+        prog.add_inst(AsmModule.Jalr("x0", "ra"))
+        func_after = prog.get_number_of_instructions()
+        beq.set_target(func_after)
+        
+        # print(f"Function at address {addr_var}")
+        return addr_var
+    
+    def visit_app(self, exp, prog):
+        # 1. Obter o endereço da função
+
+        func_address = exp.function.accept(self, prog)
+
+        # 2. Avaliar o parâmetro da função
+        param = exp.actual.accept(self, prog)
+        prog.add_inst(AsmModule.Add("a0", param, "x0"))
+
+        # 3. Chamar a função
+        prog.add_inst(AsmModule.Jalr("ra", func_address,0))
+
+        # 4. Recuperar o valor de retorno (em `a0`)
+        result = self.next_var_name()
+        prog.add_inst(AsmModule.Add(result, "a0", "x0"))
+        return result
+
+
+
+class RenameVisitor(ABC):
+    """
+    This visitor traverses the AST of a program, renaming variables to ensure
+    that they all have different names.
+    """
+
+    def __init__(self):
+        # TODO: You might want to initialize some stuff here.
+        pass
+
+    def visit_var(self, exp, name_map):
+        # TODO: Implement this method.
+        pass
+
+    def visit_bln(self, exp, name_map):
+        pass
+
+    def visit_num(self, exp, name_map):
+        pass
+
+    def visit_eql(self, exp, name_map):
+        # TODO: Implement this method.
+        pass
+
+    def visit_and(self, exp, name_map):
+        """
+        Example:
+            >>> y0 = Var('x')
+            >>> y1 = Var('x')
+            >>> x0 = And(Lth(y0, Num(2)), Leq(Num(2), y1))
+            >>> x1 = Var('x')
+            >>> e0 = Let('x', Num(2), Add(x0, Num(3)))
+            >>> e1 = Let('x', e0, Mul(x1, Num(10)))
+            >>> r = RenameVisitor()
+            >>> e1.accept(r, {})
+            >>> y0.identifier == y1.identifier
+            True
+
+            >>> y0 = Var('x')
+            >>> y1 = Var('x')
+            >>> x0 = And(Lth(y0, Num(2)), Leq(Num(2), y1))
+            >>> x1 = Var('x')
+            >>> e0 = Let('x', Num(2), Add(x0, Num(3)))
+            >>> e1 = Let('x', e0, Mul(x1, Num(10)))
+            >>> r = RenameVisitor()
+            >>> e1.accept(r, {})
+            >>> y0.identifier == x1.identifier
+            False
+        """
+        # TODO: Implement this method.
+        pass
+
+    def visit_or(self, exp, name_map):
+        """
+        Example:
+            >>> y0 = Var('x')
+            >>> y1 = Var('x')
+            >>> x0 = Or(Lth(y0, Num(2)), Leq(Num(2), y1))
+            >>> x1 = Var('x')
+            >>> e0 = Let('x', Num(2), Add(x0, Num(3)))
+            >>> e1 = Let('x', e0, Mul(x1, Num(10)))
+            >>> r = RenameVisitor()
+            >>> e1.accept(r, {})
+            >>> y0.identifier == y1.identifier
+            True
+
+            >>> y0 = Var('x')
+            >>> y1 = Var('x')
+            >>> x0 = Or(Lth(y0, Num(2)), Leq(Num(2), y1))
+            >>> x1 = Var('x')
+            >>> e0 = Let('x', Num(2), Add(x0, Num(3)))
+            >>> e1 = Let('x', e0, Mul(x1, Num(10)))
+            >>> r = RenameVisitor()
+            >>> e1.accept(r, {})
+            >>> y0.identifier == x1.identifier
+            False
+        """
+        # TODO: Implement this method.
+        pass
+
+    def visit_add(self, exp, name_map):
+        # TODO: Implement this method.
+        pass
+
+    def visit_sub(self, exp, name_map):
+        # TODO: Implement this method.
+        pass
+
+    def visit_mul(self, exp, name_map):
+        # TODO: Implement this method.
+        pass
+
+    def visit_div(self, exp, name_map):
+        # TODO: Implement this method.
+        pass
+
+    def visit_leq(self, exp, name_map):
+        # TODO: Implement this method.
+        pass
+
+    def visit_lth(self, exp, name_map):
+        # TODO: Implement this method.
+        pass
+
+    def visit_neg(self, exp, name_map):
+        # TODO: Implement this method.
+        pass
+
+    def visit_not(self, exp, name_map):
+        # TODO: Implement this method.
+        pass
+
+    def visit_ifThenElse(self, exp, name_map):
+        """
+        Examples:
+            >>> x0 = Var('x')
+            >>> x1 = Var('x')
+            >>> e0 = IfThenElse(Lth(x0, x1), Num(1), Num(2))
+            >>> e1 = Let('x', Num(3), e0)
+            >>> r = RenameVisitor()
+            >>> e1.accept(r, {})
+            >>> x0.identifier == x1.identifier
+            True
+
+            >>> x0 = Var('x')
+            >>> x1 = Var('x')
+            >>> e0 = IfThenElse(Lth(x0, x1), Num(1), Num(2))
+            >>> e1 = Let('x', Num(3), e0)
+            >>> e2 = Let('x', e1, Num(3))
+            >>> r = RenameVisitor()
+            >>> e1.accept(r, {})
+            >>> e2.identifier != x1.identifier == e1.identifier
+            True
+        """
+        # TODO: Implement this method.
+        pass
+
+    def visit_let(self, exp, name_map):
+        """
+        Examples:
+            >>> e0 = Let('x', Num(2), Add(Var('x'), Num(3)))
+            >>> e1 = Let('x', e0, Mul(Var('x'), Num(10)))
+            >>> e0.identifier == e1.identifier
+            True
+
+            >>> e0 = Let('x', Num(2), Add(Var('x'), Num(3)))
+            >>> e1 = Let('x', e0, Mul(Var('x'), Num(10)))
+            >>> r = RenameVisitor()
+            >>> e1.accept(r, {})
+            >>> e0.identifier == e1.identifier
+            False
+
+            >>> x0 = Var('x')
+            >>> x1 = Var('x')
+            >>> e0 = Let('x', Num(2), Add(x0, Num(3)))
+            >>> e1 = Let('x', e0, Mul(x1, Num(10)))
+            >>> x0.identifier == x1.identifier
+            True
+
+            >>> x0 = Var('x')
+            >>> x1 = Var('x')
+            >>> e0 = Let('x', Num(2), Add(x0, Num(3)))
+            >>> e1 = Let('x', e0, Mul(x1, Num(10)))
+            >>> r = RenameVisitor()
+            >>> e1.accept(r, {})
+            >>> x0.identifier == x1.identifier
+            False
+        """
+        # TODO: Implement this method.
+        pass
+
+    def visit_fn(self, exp, name_map):
+        """
+        >>> e0 = Fn('v', Mul(Var('v'), Var('v')))
+        >>> e1 = Let('v', e0, Var('v'))
+        >>> e1.accept(RenameVisitor(), {})
+        >>> e0.formal != e1.identifier
+        True
+
+        >>> x0 = Var('v')
+        >>> x1 = Var('v')
+        >>> x2 = Var('v')
+        >>> e0 = Fn('v', Mul(x0, x2))
+        >>> e1 = Let('v', e0, x1)
+        >>> e1.accept(RenameVisitor(), {})
+        >>> x0.identifier != x1.identifier and x0.identifier == x2.identifier
+        True
+        """
+        # TODO: Implement this method.
+        pass
+
+    def visit_app(self, exp, name_map):
+        """
+        >>> x0 = Var('x')
+        >>> x1 = Var('x')
+        >>> x2 = Var('x')
+        >>> e = Let('x', Fn('x', Add(x0, Num(1))), App(x1, x2))
+        >>> e.accept(RenameVisitor(), {})
+        >>> x0.identifier != x1.identifier and x1.identifier == x2.identifier
+        True
+        """
+        # TODO: Implement this method.
+        pass
